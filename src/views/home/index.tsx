@@ -3,7 +3,11 @@ import React from 'react'
 
 function Home() {
     return (
-    <div className=''>Home</div>
+      <div className='bg-info text-center'>
+        <div className="container">
+        Home
+        </div>
+      </div>
   )
 }
 
