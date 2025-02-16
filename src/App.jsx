@@ -4,9 +4,9 @@ import useDeveloper from "./hooks/useDeveloper";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import Home from "./views/home";
-import Navigation from "./components/Navigation.tsx";
-import Register from "./views/register/index.tsx";
-import Login from "./views/login/index.tsx";
+import Navigation from "./components/Navigation.jsx";
+import Register from "./views/register/index.jsx";
+import Login from "./views/login/index.jsx";
 import Header from "./components/Header";
 
 function App() {
