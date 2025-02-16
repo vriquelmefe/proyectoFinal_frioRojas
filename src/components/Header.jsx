@@ -20,7 +20,7 @@ function ControlledCarousel() {
       </Carousel.Item>
       
       <Carousel.Item className="justify-content-center align-items-center">
-        <img src="/logo.png" className="d-block mx-auto w-50 bg-success" />
+        <img src="/logo.png" className="d-block mx-auto w-50 bg-success" alt='Producto destacado 2' />
         <Carousel.Caption className="text-dark">
           <h3>Second slide label</h3>
           <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
@@ -28,7 +28,7 @@ function ControlledCarousel() {
       </Carousel.Item>
 
       <Carousel.Item className="justify-content-center align-items-center">
-        <img src="/logo.png" className="d-block mx-auto w-50 bg-warning" />
+        <img src="/logo.png" className="d-block mx-auto w-50 bg-warning" alt='Producto destacado 3'/>
         <Carousel.Caption className="text-dark">
           <h3>Third slide label</h3>
           <p>Praesent commodo cursus magna, vel scelerisque nisl consectetur.</p>

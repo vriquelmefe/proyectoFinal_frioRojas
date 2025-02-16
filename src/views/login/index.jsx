@@ -1,23 +1,17 @@
-<<<<<<< HEAD:src/views/login/index.jsx
-
-import { Card } from 'react-bootstrap'
-=======
-import React from 'react';
 import { useForm } from 'react-hook-form';
 import { Card, Form, Button } from 'react-bootstrap';
-import { loginForm } from '../../types';
->>>>>>> 19a15352ca79d654d8ab59f0c68b137756e9ea6f:src/views/login/index.tsx
+
 
 function Login() {
 
-  const initialValues: loginForm = {
+  const initialValues = {
     email: '',
     password: ''
   };
 
   const { register, handleSubmit, formState: { errors } } = useForm({ defaultValues: initialValues });
 
-  const handleLogin = (data: any) => {
+  const handleLogin = (data) => {
     console.log(data);
   };
 

@@ -1,35 +1,29 @@
-<<<<<<< HEAD:src/views/register/index.jsx
-=======
-import React from "react";
 import { Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
-import ErrorMessage from "../../components/ErrorMessage";
-import { registerFrom } from "../../types";
->>>>>>> 19a15352ca79d654d8ab59f0c68b137756e9ea6f:src/views/register/index.tsx
+import { ErrorMessage } from "@hookform/error-message";
 
 function Register() {
-  const initialValues: registerFrom = {
-    name: "",
-    apellido: "",
-    email: "",
-    email_confirmation: "",
-    password: "",
-    password_confirmation: "",
-  };
-
   const {
     register,
     watch,
     handleSubmit,
     formState: { errors },
-  } = useForm({ defaultValues: initialValues });
+  } = useForm({
+    defaultValues: {
+      name: "",
+      apellido: "",
+      email: "",
+      email_confirmation: "",
+      password: "",
+      password_confirmation: "",
+    },
+  });
 
   const password = watch("password");
-
   const email = watch("email");
 
-  const handleRegister = (fromData: registerFrom) => {
-    console.log(fromData);
+  const handleRegister = (formData) => {
+    console.log(formData);
   };
 
   return (
@@ -44,7 +38,7 @@ function Register() {
                   style={{ backgroundColor: "#1D1F3D" }}
                 >
                   <img
-                    src="./public/logo.png"
+                    src="/logo.png"
                     className="img-fluid rounded-start"
                     alt="Imagen de registro"
                   />
@@ -71,9 +65,7 @@ function Register() {
                             required: "El nombre es obligatorio",
                           })}
                         />
-                        {errors.name && (
-                          <ErrorMessage>{errors.name.message}</ErrorMessage>
-                        )}
+                        <ErrorMessage errors={errors} name="name" as="p" className="text-danger" />
                       </div>
                       <div className="mb-3">
                         <label htmlFor="apellido" className="form-label">
@@ -88,9 +80,7 @@ function Register() {
                             required: "El apellido es obligatorio",
                           })}
                         />
-                        {errors.apellido && (
-                          <ErrorMessage>{errors.apellido.message}</ErrorMessage>
-                        )}
+                        <ErrorMessage errors={errors} name="apellido" as="p" className="text-danger" />
                       </div>
                       <div className="mb-3">
                         <label htmlFor="email" className="form-label">
@@ -109,15 +99,10 @@ function Register() {
                             },
                           })}
                         />
-                        {errors.email && (
-                          <ErrorMessage>{errors.email.message}</ErrorMessage>
-                        )}
+                        <ErrorMessage errors={errors} name="email" as="p" className="text-danger" />
                       </div>
                       <div className="mb-3">
-                        <label
-                          htmlFor="email_confirmation"
-                          className="form-label"
-                        >
+                        <label htmlFor="email_confirmation" className="form-label">
                           Confirmar E-mail
                         </label>
                         <input
@@ -126,17 +111,12 @@ function Register() {
                           placeholder="Confirmar Email"
                           className="form-control"
                           {...register("email_confirmation", {
-                            required:
-                              "La confirmación del email es obligatorio",
+                            required: "La confirmación del email es obligatoria",
                             validate: (value) =>
                               value === email || "Los emails no coinciden",
                           })}
                         />
-                        {errors.email_confirmation && (
-                          <ErrorMessage>
-                            {errors.email_confirmation.message}
-                          </ErrorMessage>
-                        )}
+                        <ErrorMessage errors={errors} name="email_confirmation" as="p" className="text-danger" />
                       </div>
                       <div className="mb-3">
                         <label htmlFor="password" className="form-label">
@@ -151,20 +131,14 @@ function Register() {
                             required: "El password es obligatorio",
                             minLength: {
                               value: 8,
-                              message:
-                                "El password debe tener al menos 8 caracteres",
+                              message: "El password debe tener al menos 8 caracteres",
                             },
                           })}
                         />
-                        {errors.password && (
-                          <ErrorMessage>{errors.password.message}</ErrorMessage>
-                        )}
+                        <ErrorMessage errors={errors} name="password" as="p" className="text-danger" />
                       </div>
                       <div className="mb-3">
-                        <label
-                          htmlFor="password_confirmation"
-                          className="form-label"
-                        >
+                        <label htmlFor="password_confirmation" className="form-label">
                           Repetir Password
                         </label>
                         <input
@@ -173,18 +147,12 @@ function Register() {
                           placeholder="Repetir Password"
                           className="form-control"
                           {...register("password_confirmation", {
-                            required:
-                              "La confirmación del password es obligatorio",
+                            required: "La confirmación del password es obligatoria",
                             validate: (value) =>
-                              value === password ||
-                              "Los passwords no coinciden",
+                              value === password || "Los passwords no coinciden",
                           })}
                         />
-                        {errors.password_confirmation && (
-                          <ErrorMessage>
-                            {errors.password_confirmation.message}
-                          </ErrorMessage>
-                        )}
+                        <ErrorMessage errors={errors} name="password_confirmation" as="p" className="text-danger" />
                       </div>
                       <div className="d-grid">
                         <input
