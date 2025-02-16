@@ -1,18 +1,17 @@
-import React from 'react';
 import { useForm } from 'react-hook-form';
 import { Card, Form, Button } from 'react-bootstrap';
-import { loginForm } from '../../types';
+
 
 function Login() {
 
-  const initialValues: loginForm = {
+  const initialValues = {
     email: '',
     password: ''
   };
 
   const { register, handleSubmit, formState: { errors } } = useForm({ defaultValues: initialValues });
 
-  const handleLogin = (data: any) => {
+  const handleLogin = (data) => {
     console.log(data);
   };
 
