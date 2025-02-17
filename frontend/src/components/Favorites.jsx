@@ -1,40 +1,52 @@
-import { useState } from "react";
-import { Button, Card, ListGroup } from "react-bootstrap";
+import { Container, Row, Col, Card, Button } from "react-bootstrap";
+import { useCart } from "../contexts/CartContext";
+import productosData from "../data/data";
+import { useNavigate } from "react-router-dom";
 
 const Favorites = () => {
-  const [favorites, setFavorites] = useState([
-    { id: 1, name: "Válvula de expansión", price: 30 },
-    { id: 2, name: "Evaporador", price: 80 },
-  ]);
+  const { favoritos, toggleFavorito } = useCart();
+  const navigate = useNavigate();
 
-  const removeFavorite = (id) => {
-    setFavorites(favorites.filter((item) => item.id !== id));
-  };
+  console.log("Favoritos almacenados:", favoritos);
+
+  const productosFavoritos = Object.keys(favoritos)
+    .filter((id) => favoritos[id])
+    .map((id) => {
+      for (let categoria in productosData) {
+        const producto = productosData[categoria].find((p) => p.id === parseInt(id));
+        if (producto) return producto;
+      }
+      return null;
+    })
+    .filter(Boolean);
 
   return (
-    <Card className="shadow">
-      <Card.Header className="bg-dark text-white">
-        <h4>Mis Favoritos</h4>
-      </Card.Header>
-      <Card.Body>
-        <ListGroup>
-          {favorites.map((item) => (
-            <ListGroup.Item key={item.id} className="d-flex justify-content-between align-items-center">
-              <div>
-                <h6>{item.name}</h6>
-                <small>Precio: ${item.price}</small>
-              </div>
-              <Button variant="danger" size="sm" onClick={() => removeFavorite(item.id)}>
-                Eliminar
-              </Button>
-            </ListGroup.Item>
-          ))}
-        </ListGroup>
-      </Card.Body>
-      <Card.Footer>
-        <small>{favorites.length} productos en favoritos</small>
-      </Card.Footer>
-    </Card>
+    <Container className="my-8">
+      <h2 className="text-center">Productos Favoritos</h2>
+      <Row className="justify-content-center">
+        {productosFavoritos.length > 0 ? (
+          productosFavoritos.map((producto) => (
+            <Col key={producto.id} md={4} className="mb-4">
+              <Card className="card-custom text-center">
+                <Card.Img variant="top" src={producto.imagen} alt={producto.nombre} />
+                <Card.Body>
+                  <div className="d-flex justify-content-between align-items-center">
+                    <Card.Title>{producto.nombre}</Card.Title>
+                    <Button variant="link" className="favorito-btn" onClick={() => toggleFavorito(producto.id)}>
+                      ❤️
+                    </Button>
+                  </div>
+                  <Card.Text>{producto.precio}</Card.Text>
+                  <Button variant="primary" onClick={() => navigate(`/producto/${producto.id}`)}>Ver Detalle</Button>
+                </Card.Body>
+              </Card>
+            </Col>
+          ))
+        ) : (
+          <p className="text-center">No tienes productos favoritos.</p>
+        )}
+      </Row>
+    </Container>
   );
 };
 

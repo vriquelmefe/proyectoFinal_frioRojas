@@ -35,9 +35,6 @@ function Home() {
                     height: "auto", 
                     transition: "transform 0.3s ease, filter 0.3s ease",
                   }}
-                  onError={(e) => {
-                    e.target.src = "https://via.placeholder.com/200x100?text=Imagen+no+disponible"; 
-                  }}
                   onMouseEnter={(e) => {
                     e.target.style.transform = "scale(1.1)"; 
                     e.target.style.filter = "brightness(0) invert(0)"; 

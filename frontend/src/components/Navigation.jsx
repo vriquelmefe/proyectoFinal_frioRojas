@@ -7,18 +7,11 @@ import Navbar from 'react-bootstrap/Navbar';
 import { useCart } from '../contexts/CartContext.jsx';
 
 function Navigation() {
-  const { carrito } = useCart(); 
+  const { obtenerTotalPrecio } = useCart(); 
   const [isLoggedIn, setIsLoggedIn] = React.useState(true);
 
   const handleLogout = () => {
     setIsLoggedIn(false); 
-  };
-
-  const calcularTotal = () => {
-    return carrito.reduce((total, producto) => {
-      const precio = parseFloat(producto.precio.replace('$', '').replace('.', '').trim());
-      return total + precio;
-    }, 0).toFixed(2);
   };
 
   return (
@@ -76,7 +69,7 @@ function Navigation() {
         <Nav className='justify-content-end ms-auto'>
           <Link to="/cart">
             <Button variant="outline-light">
-              🛒 Total: ${calcularTotal()}
+              🛒 Total: {obtenerTotalPrecio()}
             </Button>
           </Link>
         </Nav>
