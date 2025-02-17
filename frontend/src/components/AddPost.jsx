@@ -25,7 +25,7 @@ const AddPost = () => {
   };
 
   return (
-    <Card className="shadow">
+    <Card className="shadow" >
       <Card.Header className="bg-dark text-white">
         <h4>Agregar Publicación</h4>
       </Card.Header>

@@ -2,6 +2,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { Container, Row, Col, Card, Pagination, Button } from "react-bootstrap";
 import { useState } from "react";
 import productosData from "../data/data";
+import { useCart } from "../contexts/CartContext";
 
 const Productos = () => {
   const { categoria } = useParams();
@@ -9,6 +10,7 @@ const Productos = () => {
   const productosPorPagina = 6;
   const [paginaActual, setPaginaActual] = useState(1);
   const navigate = useNavigate();
+  const { favoritos, toggleFavorito } = useCart();
 
   const totalPaginas = Math.ceil(productos.length / productosPorPagina);
   const productosPaginados = productos.slice(
@@ -34,7 +36,16 @@ const Productos = () => {
               <Card className="card-custom text-center">
                 <Card.Img variant="top" src={producto.imagen} alt={producto.nombre} />
                 <Card.Body>
-                  <Card.Title>{producto.nombre}</Card.Title>
+                  <div className="d-flex justify-content-between align-items-center">
+                    <Card.Title>{producto.nombre}</Card.Title>
+                    <Button
+                      variant="link"
+                      className="favorito-btn"
+                      onClick={() => toggleFavorito(producto.id)}
+                    >
+                      {favoritos[producto.id] ? "❤️" : "🤍"}
+                    </Button>
+                  </div>
                   <Card.Text>{producto.precio}</Card.Text>
                   <Button variant="primary" onClick={() => verDetalle(producto.id)}>
                     Ver Detalle
