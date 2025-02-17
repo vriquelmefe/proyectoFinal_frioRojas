@@ -85,26 +85,29 @@ const verificarUsuario = async (email, password) => {
 };
 const obtenerPublicaciones = async (id) => {
   try {
+    let consulta, valores;
+
     if (!id) {
-      const consulta = "select * from publicaciones";
-      const { rows, rowCount } = await pool.query(consulta);
+      consulta = "select * from publicacion";
+      valores = [];
+    } else {
+      consulta = `select * from publicacion where id_publicacion = $1`;
+      valores = [id];
     }
-    if (id) {
-      const consulta = `select * from publicaciones where id = $1`;
-      const { rows, rowCount } = await pool.query(consulta, [id]);
-    }
+    const { rows, rowCount } = await pool.query(consulta, valores);
     if (!rowCount) {
       throw { message: "error al cargar informacion", code: 404 };
     }
     return rows;
   } catch (error) {
+    console.error("Error al obtener publicaciones:", error);
     throw error;
   }
 };
 
 const obtenerFavoritos = async (email) => {
   try {
-    const consulta = `select * from favoritos where email = $1`;
+    const consulta = `select * from favoritos where id_usuario =(select id_usuario from usuarios where email = $1)`;
     const { rows, rowCount } = await pool.query(consulta, [email]);
 
     if (!rowCount) {
@@ -211,6 +214,39 @@ const precioActual = async (idPublicacion) => {
     throw error;
   }
 };
+
+const obtenerArticulos = async (id) => {
+  try {
+    let consulta, valores;
+    if (!id) {
+      consulta = "select * from articulos";
+      valores = [];
+    } else {
+      consulta = "select * from articulos where id_producto=$1";
+      valores = [id];
+    }
+    const { rows, rowCount } = await pool.query(consulta, valores);
+    return rows;
+  } catch (error) {
+    console.error("Error al obtener producto:", error);
+    throw error;
+  }
+};
+
+const registrarFavorito = async (idComprador, idPublicacion) => {
+  try {
+    const consulta =
+      "insert into favoritos(id_usuario, id_publicacion)values($1, $2)";
+    const { rows, rowCount } = await pool.query(consulta, [
+      idComprador,
+      idPublicacion,
+    ]);
+  } catch (error) {
+    console.error("Error al Registrar Favoritos:", error);
+    throw error;
+  }
+};
+
 export {
   obtenerUsuario,
   registrarUsuario,
@@ -224,4 +260,6 @@ export {
   registrarVenta,
   usuarioActual,
   precioActual,
+  obtenerArticulos,
+  registrarFavorito,
 };

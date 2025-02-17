@@ -15,6 +15,8 @@ import {
   registrarVenta,
   usuarioActual,
   precioActual,
+  obtenerArticulos,
+  registrarFavorito,
 } from "./consultas.js";
 const port = 3000;
 
@@ -57,17 +59,54 @@ app.get("/usuario", async (req, res) => {
       .json({ message: error.message || "Error interno del servidor" });
   }
 });
+//get Articulos
+app.get("/articulos", async (req, res) => {
+  try {
+    const articulos = await obtenerArticulos();
+    if (!articulos) {
+      return res.status(404).json({ message: "No se encuentran Articulos" });
+    }
+    res.json(articulos);
+  } catch (error) {
+    res
+      .status(error.code || 500)
+      .json({ message: error.message || "Error interno del servidor" });
+  }
+});
+
+app.get("/articulos/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const articulos = await obtenerArticulos(id);
+    if (!articulos) {
+      return res.status(404).json({ message: "No se encuentran Articulos" });
+    }
+    res.json(articulos);
+  } catch (error) {
+    res
+      .status(error.code || 500)
+      .json({ message: error.message || "Error interno del servidor" });
+  }
+});
 
 // get publicaciones
 app.get("/publicaciones", async (req, res) => {
-  const publicaciones = await obtenerPublicaciones;
+  try {
+    const publicaciones = await obtenerPublicaciones();
 
-  if (!publicaciones) {
-    return res.status(404).json({ message: "No se encuentran Publicaciones" });
+    if (!publicaciones) {
+      return res
+        .status(404)
+        .json({ message: "No se encuentran Publicaciones" });
+    }
+    //console.log("datos en get", datosUsuario);
+    res.json(publicaciones);
+    /*res.json({publicaciones: [],});*/
+  } catch (error) {
+    res
+      .status(error.code || 500)
+      .json({ message: error.message || "Error interno del servidor" });
   }
-  //console.log("datos en get", datosUsuario);
-  res.send(publicaciones);
-  /*res.json({publicaciones: [],});*/
 });
 
 // get publicaciones:id
@@ -79,7 +118,7 @@ app.get("/publicaciones/:id", async (req, res) => {
     return res.status(404).json({ message: "No se encuentran Publicaciones" });
   }
   //console.log("datos en get", datosUsuario);
-  res.send(publicaciones);
+  res.json(publicaciones);
   /*res.json({
     publicaciones: [
       {
@@ -297,6 +336,34 @@ app.post("/ventas", async (req, res) => {
     await registrarVenta(idPublicacion, idComprador, precio);
     res.json({
       message: "Venta registrado con exito",
+    });
+  } catch (error) {
+    res.status(error.code || 500).json({ error });
+  }
+});
+
+app.post("/favoritos", async (req, res) => {
+  try {
+    const { idPublicacion } = req.body;
+    const autorization = req.header("Authorization");
+    console.log(idPublicacion);
+    if (!autorization) {
+      return res.status(401).json({ message: "No se proporcionó un token" });
+    }
+    const token = autorization.split(" ")[1];
+    if (!token) {
+      return res.status(401).json({ message: "Token no válido" });
+    }
+
+    const verify = jwt.verify(token, "desafioLatam");
+
+    const { email } = verify;
+
+    const idComprador = await usuarioActual(email);
+
+    await registrarFavorito(idComprador, idPublicacion);
+    res.json({
+      message: "Favorito Guardado",
     });
   } catch (error) {
     res.status(error.code || 500).json({ error });
