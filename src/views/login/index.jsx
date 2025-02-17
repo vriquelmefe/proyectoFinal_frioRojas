@@ -1,18 +1,17 @@
-import React from 'react';
 import { useForm } from 'react-hook-form';
 import { Card, Form, Button } from 'react-bootstrap';
-import { loginForm } from '../../types';
+
 
 function Login() {
 
-  const initialValues: loginForm = {
+  const initialValues = {
     email: '',
     password: ''
   };
 
   const { register, handleSubmit, formState: { errors } } = useForm({ defaultValues: initialValues });
 
-  const handleLogin = (data: any) => {
+  const handleLogin = (data) => {
     console.log(data);
   };
 
@@ -24,7 +23,6 @@ function Login() {
             <div className="row g-0">
               <div className="col-md-8">
                 <Card.Body className="p-4">
-                  {/* <Card.Title className="text-center mb-4">Login</Card.Title> */}
                   <Form onSubmit={handleSubmit(handleLogin)}>
                     <Form.Group className="mb-3" controlId="formBasicEmail">
                       <Form.Label>Email</Form.Label>

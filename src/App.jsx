@@ -5,26 +5,33 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import Home from "./views/home";
 import Navigation from "./components/Navigation.jsx";
-import Register from "./views/register/index.jsx";
-import Login from "./views/login/index.jsx";
-import Header from "./components/Header";
+import Register from "./views/register";
+import Login from "./views/login";
+import Productos from "./components/Productos.jsx"; 
+import ProductDetail from "./components/ProductDetail.jsx";
+import Cart from "./components/Cart.jsx";
+import { CartProvider } from "./contexts/CartContext.jsx";
 
 function App() {
   const globalState = useDeveloper();
 
   return (
     <Context.Provider value={globalState}>
+      <CartProvider> 
       <BrowserRouter>
         <Navigation />
         <Routes>
-          <Route element={<Header />}>
           <Route path="/" element={<Home />} />
-          </Route>
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/productos/:categoria" element={<Productos />} />
+          <Route path="/producto/:id" element={<ProductDetail />} />
+          <Route path="/cart" element={<Cart />} />
         </Routes>
       </BrowserRouter>
+         </CartProvider>
     </Context.Provider>
   );
 }
+
 export default App;

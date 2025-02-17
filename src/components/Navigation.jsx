@@ -1,17 +1,26 @@
-import React from 'react'
+import React from 'react';
 import { Link } from 'react-router-dom';
 import Button from 'react-bootstrap/Button';
 import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
-
-
+import { useCart } from '../contexts/CartContext.jsx';
 
 function Navigation() {
+  const { carrito } = useCart(); 
   const [isLoggedIn, setIsLoggedIn] = React.useState(true);
+
   const handleLogout = () => {
     setIsLoggedIn(false); 
   };
+
+  const calcularTotal = () => {
+    return carrito.reduce((total, producto) => {
+      const precio = parseFloat(producto.precio.replace('$', '').replace('.', '').trim());
+      return total + precio;
+    }, 0).toFixed(2);
+  };
+
   return (
     <Navbar data-bs-theme="dark" className='navegacion navigationBar'>
       <Container>
@@ -37,15 +46,15 @@ function Navigation() {
               <Link to="/register" className='mx-3 pt-2'>
                 <Button variant="outline-info" className="text-white">🔒 Registro</Button>
               </Link>
-                <Link to="/" className='mx-3 pt-2'>
-              <Button
-                variant="outline-info"
+              <Link to="/" className='mx-3 pt-2'>
+                <Button
+                  variant="outline-info"
                   className="text-white"
                   onClick={handleLogout}
-              >
-                🔒 Logout
+                >
+                  🔒 Logout
                 </Button>
-                </Link>
+              </Link>
             </>
           ) : (
             <>
@@ -66,12 +75,14 @@ function Navigation() {
 
         <Nav className='justify-content-end ms-auto'>
           <Link to="/cart">
-            <Button variant="outline-light">🛒 Total: $</Button>
+            <Button variant="outline-light">
+              🛒 Total: ${calcularTotal()}
+            </Button>
           </Link>
         </Nav>
       </Container>
     </Navbar>
-  )
+  );
 }
 
-export default Navigation
+export default Navigation;
