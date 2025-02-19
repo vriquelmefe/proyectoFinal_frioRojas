@@ -13,7 +13,7 @@ import {
   registrarArticulo,
   registarPublicacion,
   registrarVenta,
-} from "./consultas";
+} from "./consultas.js";
 const port = 3000;
 
 app.use(cors());
