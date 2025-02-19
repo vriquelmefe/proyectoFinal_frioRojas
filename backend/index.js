@@ -226,8 +226,9 @@ app.post("/login", async (req, res) => {
     const token = jwt.sign({ email: usuario.email }, "desafioLatam", {
       expiresIn: "10m",
     });
+    const { id_usuario, nombre, email: correo, rol } = usuario;
     //console.log("Usuario autenticado:", token);
-    res.json({ token, email });
+    res.json({ token, usuario: { id_usuario, nombre, correo, rol } });
     /*res.json({
       token: "blablablablabla",
       email: "uncorreo",
@@ -253,7 +254,7 @@ app.post("/register", async (req, res) => {
       expiresIn: "10m",
     });
     //console.log("Usuario autenticado:", token);
-    res.json({ token, email });
+    res.json({ token, usuario });
 
     /*res.json({
         token: "blablablablabla",

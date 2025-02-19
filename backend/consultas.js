@@ -5,7 +5,7 @@ const pool = new Pool({
   host: "localhost",
   user: "postgres",
   password: "Pnuevo987",
-  database: "friorojas",
+  database: "frioRojas",
   allowExitOnIdle: true,
 });
 
@@ -27,7 +27,7 @@ const registrarUsuario = async (nombre, email, rol, password) => {
   try {
     const passwordEncriptada = bcrypt.hashSync(password, 10);
     password = passwordEncriptada;
-    const consulta = `insert into usuarios (nombre,email,rol,password) values($1,$2,$3,$4 ) returning *`;
+    const consulta = `insert into usuarios (nombre,email,rol,password) values($1,$2,$3,$4 ) returning id_usuario,nombre,email,rol`;
 
     const { rows, rowCount } = await pool.query(consulta, [
       nombre,
@@ -64,6 +64,7 @@ const verificarUsuario = async (email, password) => {
       throw error;
     }
     const usuario = rows[0];
+
     const { password: passwordEncriptada } = usuario;
 
     const passwordEsCorrecta = bcrypt.compareSync(password, passwordEncriptada);
@@ -73,6 +74,7 @@ const verificarUsuario = async (email, password) => {
       error.code = 401;
       throw error;
     }
+
     return usuario;
   } catch (error) {
     console.error("Error verificando usuario:", error);
