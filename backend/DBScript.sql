@@ -1,4 +1,5 @@
 Create Database frioRojas;
+\c friorojas;
 
 create table usuarios( 
 	id_usuario serial PRIMARY key, 
@@ -36,7 +37,7 @@ create table ventas(
 	id_venta serial primary key,
 	id_publicacion int not null,
 	id_comprador int not null,
-	precio_producto decimal(10,2) not null check (precio>=0),
+	precio_producto decimal(10,2) not null check (precio_producto>=0),
 	FOREIGN KEY (id_publicacion) REFERENCES publicacion(id_publicacion),
 	FOREIGN key (id_comprador) REFERENCES usuarios(id_usuario) on delete cascade
 );
