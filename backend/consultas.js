@@ -1,17 +1,41 @@
 import pkg from "pg";
 import bcrypt from "bcryptjs";
-
 const { Pool } = pkg;
 
 const pool = new Pool({
   host: "localhost",
   user: "postgres",
-  password: "Pnuevo987",
-  database: "frioRojas",
+  password: "123456",
+  database: "friorojas",
   allowExitOnIdle: true,
 });
 
-const obtenerUsuario = async (email) => {
+export const registroUsuario = async (nombre, email, rol, password) => {
+  try {
+    const passwordEncriptada = bcrypt.hashSync(password);
+    password = passwordEncriptada;
+    const consulta = `INSERT INTO usuarios (nombre, email, rol, password) VALUES ($1, $2, $3, $4)`;
+    const valores = [nombre, email, rol, passwordEncriptada];
+    await pool.query(consulta, valores);
+  } catch (error) {
+    throw { code: 500, status: "No se pudo registrar el usuario" };
+  }
+};
+
+export const loginUsuario = async (email, password) => {
+  const values = [email];
+  const consulta = "SELECT * FROM usuarios WHERE email = $1";
+  const {
+    rows: [usuario],
+  } = await pool.query(consulta, values);
+  const { password: passwordEncriptada } = usuario;
+  const passwordEsCorrecta = bcrypt.compareSync(password, passwordEncriptada);
+  if (!passwordEsCorrecta) {
+    throw { code: 401, message: "Email o contraseña incorrecta" };
+  }
+};
+
+export const obtenerUsuario = async (email) => {
   try {
     const consulta = `select * from usuarios where email = $1`;
     const { rows, rowCount } = await pool.query(consulta, [email]);
@@ -25,23 +49,7 @@ const obtenerUsuario = async (email) => {
   }
 };
 
-const registrarUsuario = async (nombre, email, password, rol) => {
-  try {
-    const passwordEncriptada = bcrypt.hashSync(password);
-    password = passwordEncriptada;
-    const consulta = `insert into usuarios (nombre,email,rol,password) values($1,$2,$3,$4 )`;
-    //console.log(password);
-    const { rows, rowCount } = await pool.query(consulta, [
-      nombre,
-      email,
-      rol,
-      password,
-    ]);
-  } catch (error) {
-    res.status(error.code || 500).send(error);
-  }
-};
-const usuarioExiste = async (email) => {
+export const usuarioExiste = async (email) => {
   try {
     const consulta = `select * from usuarios where email = $1`;
     const { rows, rowCount } = await pool.query(consulta, [email]);
@@ -52,7 +60,7 @@ const usuarioExiste = async (email) => {
     res.json(error);
   }
 };
-const verificarUsuario = async (email, password) => {
+export const verificarUsuario = async (email, password) => {
   try {
     const consulta = `select * from usuarios where email = $1`;
     const values = [email];
@@ -77,7 +85,7 @@ const verificarUsuario = async (email, password) => {
     }
   }
 };
-const obtenerPublicaciones = async (id) => {
+export const obtenerPublicaciones = async (id) => {
   try {
     if (!id) {
       consulta = "select * from publicaciones";
@@ -96,7 +104,7 @@ const obtenerPublicaciones = async (id) => {
   }
 };
 
-const obtenerFavoritos = async (email) => {
+export const obtenerFavoritos = async (email) => {
   try {
     consulta = `select * from favoritos where email = $1`;
     const { rows, rowCount } = await pool.query(consulta, [email]);
@@ -109,7 +117,7 @@ const obtenerFavoritos = async (email) => {
     throw error;
   }
 };
-const obtenerVentas = async (email) => {
+export const obtenerVentas = async (email) => {
   try {
     consulta = `select * from ventas where email = $1`;
     const { rows, rowCount } = await pool.query(consulta, [email]);
@@ -123,9 +131,9 @@ const obtenerVentas = async (email) => {
   }
 };
 
-const registrarArticulo = async (nombre, descripcion, precio, stock, url) => {
+export const registrarArticulo = async (nombre, descripcion, precio, stock, url) => {
   try {
-    consulta = `insert into articulos(nombre, descripcion, precio, stock, url) values ($1, $2, $3, $4, $5)`;
+    consulta = "insert into articulos(nombre, descripcion, precio, stock, url) values ($1, $2, $3, $4, $5)";
     const { rows, rowCount } = await pool.query(consulta, [
       nombre,
       descripcion,
@@ -138,7 +146,7 @@ const registrarArticulo = async (nombre, descripcion, precio, stock, url) => {
   }
 };
 
-const registarPublicacion = async (idProducto, idVendedor) => {
+export const registarPublicacion = async (idProducto, idVendedor) => {
   try {
     consulta = `insert into publicacion (id_producto, id_vendedor) values($1, $2)`;
     const { rows, rowCount } = await pool.query(consulta, [
@@ -150,7 +158,7 @@ const registarPublicacion = async (idProducto, idVendedor) => {
   }
 };
 
-const registrarVenta = async (idPublicacion, idComprador, precio) => {
+export const registrarVenta = async (idPublicacion, idComprador, precio) => {
   try {
     consulta = `insert into ventas(id_publicacion, id_comprador, precio_producto values($1, $2, $3))`;
     const { rows, rowCount } = await pool.query(consulta, [
@@ -161,16 +169,4 @@ const registrarVenta = async (idPublicacion, idComprador, precio) => {
   } catch (error) {
     res.status(error.code || 500).send(error);
   }
-};
-export {
-  obtenerUsuario,
-  registrarUsuario,
-  verificarUsuario,
-  usuarioExiste,
-  obtenerPublicaciones,
-  obtenerFavoritos,
-  obtenerVentas,
-  registrarArticulo,
-  registarPublicacion,
-  registrarVenta,
 };

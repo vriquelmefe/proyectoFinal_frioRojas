@@ -1,18 +1,48 @@
-import { useForm } from 'react-hook-form';
-import { Card, Form, Button } from 'react-bootstrap';
-
+import { useForm } from "react-hook-form";
+import { Card, Form, Button } from "react-bootstrap";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 function Login() {
+  const navigate = useNavigate();
 
   const initialValues = {
-    email: '',
-    password: ''
+    email: "",
+    password: "",
   };
 
-  const { register, handleSubmit, formState: { errors } } = useForm({ defaultValues: initialValues });
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({ defaultValues: initialValues });
 
-  const handleLogin = (data) => {
-    console.log(data);
+  const [loginError, setLoginError] = useState("");
+
+  const handleLogin = async (data) => {
+    try {
+      const response = await fetch("http://localhost:3000/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+
+      if (!response.ok) {
+        throw new Error("Error en la solicitud");
+      }
+
+      const result = await response.json();
+      console.log("Token:", result.token);
+      // Aquí puedes guardar el token en el almacenamiento local o en el estado de la aplicación
+      localStorage.setItem("token", result.token);
+      alert("Inicio de sesión exitoso");
+      navigate("/"); // Redirigir a la página de inicio
+    } catch (error) {
+      console.error("Error:", error);
+      setLoginError("Error al iniciar sesión. Por favor, verifica tus credenciales.");
+    }
   };
 
   return (
@@ -29,9 +59,13 @@ function Login() {
                       <Form.Control
                         type="email"
                         placeholder="Enter email"
-                        {...register("email", { required: "Email is required" })}
+                        {...register("email", {
+                          required: "Email is required",
+                        })}
                       />
-                      {errors.email && <p className="text-danger">{errors.email.message}</p>}
+                      {errors.email && (
+                        <p className="text-danger">{errors.email.message}</p>
+                      )}
                     </Form.Group>
 
                     <Form.Group className="mb-3" controlId="formBasicPassword">
@@ -39,13 +73,27 @@ function Login() {
                       <Form.Control
                         type="password"
                         placeholder="Password"
-                        {...register("password", { required: "Password is required" })}
+                        {...register("password", {
+                          required: "Password is required",
+                        })}
                       />
-                      {errors.password && <p className="text-danger">{errors.password.message}</p>}
+                      {errors.password && (
+                        <p className="text-danger">{errors.password.message}</p>
+                      )}
                     </Form.Group>
 
+                    {loginError && (
+                      <p className="text-danger">{loginError}</p>
+                    )}
+
                     <div className="d-grid">
-                      <Button type="submit" style={{ backgroundColor: '#1D1F3D', borderColor: '#1D1F3D' }}>
+                      <Button
+                        type="submit"
+                        style={{
+                          backgroundColor: "#1D1F3D",
+                          borderColor: "#1D1F3D",
+                        }}
+                      >
                         Iniciar sesión
                       </Button>
                     </div>
@@ -53,7 +101,11 @@ function Login() {
                 </Card.Body>
               </div>
               <div className="col-md-4">
-                <img src="./public/logo.png" className="img-fluid rounded-end" alt="Imagen de login" />
+                <img
+                  src="./public/logo.png"
+                  className="img-fluid rounded-end"
+                  alt="Imagen de login"
+                />
               </div>
             </div>
           </Card>
