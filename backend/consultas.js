@@ -133,7 +133,7 @@ export const obtenerVentas = async (email) => {
 
 export const registrarArticulo = async (nombre, descripcion, precio, stock, url) => {
   try {
-    consulta = `insert into articulos(nombre, descripcion, precio, stock, url) values ($1, $2, $3, $4, $5)`;
+    consulta = "insert into articulos(nombre, descripcion, precio, stock, url) values ($1, $2, $3, $4, $5)";
     const { rows, rowCount } = await pool.query(consulta, [
       nombre,
       descripcion,

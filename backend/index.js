@@ -88,15 +88,6 @@ app.get("/publicaciones/:id", async (req, res) => {
   }
   //console.log("datos en get", datosUsuario);
   res.send(publicaciones);
-  /*res.json({
-    publicaciones: [
-      {
-        idProducto: "12345678",
-        idVendedor: "1234",
-        idPublicacion: "4321",
-      },
-    ],
-  });*/
 });
 
 //get favoritos
