@@ -1,23 +1,33 @@
 import express from "express";
 import cors from "cors";
 import jwt from "jsonwebtoken";
-const app = express();
-import {
-  obtenerUsuario,
-  registrarUsuario,
-  verificarUsuario,
-  usuarioExiste,
-  obtenerPublicaciones,
-  obtenerFavoritos,
-  obtenerVentas,
-  registrarArticulo,
-  registarPublicacion,
-  registrarVenta,
-} from "./consultas.js";
-const port = 3000;
+import { registroUsuario, loginUsuario } from "./consultas.js";
 
+const app = express();
 app.use(cors());
 app.use(express.json());
+app.listen(3000, console.log("Servidor OK"));
+
+app.post("/register", async (req, res) => {
+  const { nombre, email, rol, password } = req.body;
+  try {
+    await registroUsuario(nombre, email, rol, password);
+    res.status(200).send("Usuario registrado con éxito");
+  } catch (error) {
+    res.status(500).send("Algo salió mal");
+  }
+});
+
+app.post("/login", async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    await loginUsuario(email, password);
+    const token = jwt.sign({ email }, "az_AZ");
+    res.send({ token });
+  } catch (error) {
+    res.status(error.code).send(error);
+  }
+});
 
 //get usuario
 app.get("/usuario", async (req, res) => {
@@ -172,53 +182,6 @@ app.get("/ventas", async (req, res) => {
   }
 });
 
-//post login
-app.post("/login", async (req, res) => {
-  try {
-    const { email, password } = req.body;
-    if (!email || !password) {
-      return res.status(400).json({ error: "Credenciales faltantes" });
-    }
-    const usuario = await verificarUsuario(email, password);
-
-    const token = jwt.sign({ email: usuario.email }, "desafioLatam", {
-      expiresIn: 10,
-    });
-    //console.log("Usuario autenticado:", token);
-    res.json({ token, email });
-    /*res.json({
-      token: "blablablablabla",
-      email: "uncorreo",
-    });*/
-  } catch (error) {
-    res.status(error.code || 500).json({ error });
-  }
-});
-
-//post register
-app.post("/register", async (req, res) => {
-  try {
-    const { nombre, email, rol, password } = req.body;
-
-    if (await usuarioExiste(email)) console.log("El usuario ya existe");
-    else {
-      await registrarUsuario(nombre, email, rol, password);
-      const token = jwt.sign({ email: usuario.email }, "desafioLatam", {
-        expiresIn: 10,
-      });
-      //console.log("Usuario autenticado:", token);
-      res.json({ token, email });
-    }
-
-    /*res.json({
-        token: "blablablablabla",
-        email: "uncorreo",
-      });*/
-  } catch (error) {
-    res.status(error.code || 500).json({ error });
-  }
-});
-
 //post articulos
 app.post("/articulos", async (req, res) => {
   try {
@@ -263,4 +226,4 @@ app.post("/ventas", async (req, res) => {
   }
 });
 
-app.listen(port, console.log(`Servido Corriendo en puerto ${port}`));
+export default app;

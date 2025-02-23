@@ -1,29 +1,49 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { ErrorMessage } from "@hookform/error-message";
+import { useState } from "react";
 
 function Register() {
+  const navigate = useNavigate();
   const {
     register,
-    watch,
     handleSubmit,
     formState: { errors },
   } = useForm({
     defaultValues: {
-      name: "",
-      apellido: "",
+      nombre: "",
       email: "",
-      email_confirmation: "",
+      rol: "",
       password: "",
-      password_confirmation: "",
     },
   });
 
-  const password = watch("password");
-  const email = watch("email");
+  const [registerError, setRegisterError] = useState("");
 
-  const handleRegister = (formData) => {
-    console.log(formData);
+  const handleRegister = async (formData) => {
+    try {
+      const response = await fetch("http://localhost:3000/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (!response.ok) {
+        throw new Error("Error en la solicitud");
+      }
+
+      const result = await response.text();
+      console.log(result);
+      alert("Usuario registrado con éxito");
+      navigate("/");
+    } catch (error) {
+      console.error("Error:", error);
+      setRegisterError(
+        "Error al registrar el usuario. Por favor, intenta nuevamente."
+      );
+    }
   };
 
   return (
@@ -61,26 +81,16 @@ function Register() {
                           type="text"
                           placeholder="Tu Nombre"
                           className="form-control"
-                          {...register("name", {
+                          {...register("nombre", {
                             required: "El nombre es obligatorio",
                           })}
                         />
-                        <ErrorMessage errors={errors} name="name" as="p" className="text-danger" />
-                      </div>
-                      <div className="mb-3">
-                        <label htmlFor="apellido" className="form-label">
-                          Apellido
-                        </label>
-                        <input
-                          id="apellido"
-                          type="text"
-                          placeholder="Tu Apellido"
-                          className="form-control"
-                          {...register("apellido", {
-                            required: "El apellido es obligatorio",
-                          })}
+                        <ErrorMessage
+                          errors={errors}
+                          name="nombre"
+                          as="p"
+                          className="text-danger"
                         />
-                        <ErrorMessage errors={errors} name="apellido" as="p" className="text-danger" />
                       </div>
                       <div className="mb-3">
                         <label htmlFor="email" className="form-label">
@@ -99,24 +109,32 @@ function Register() {
                             },
                           })}
                         />
-                        <ErrorMessage errors={errors} name="email" as="p" className="text-danger" />
+                        <ErrorMessage
+                          errors={errors}
+                          name="email"
+                          as="p"
+                          className="text-danger"
+                        />
                       </div>
                       <div className="mb-3">
-                        <label htmlFor="email_confirmation" className="form-label">
-                          Confirmar E-mail
+                        <label htmlFor="rol" className="form-label">
+                          Rol
                         </label>
                         <input
-                          id="email_confirmation"
+                          id="rol"
                           type="text"
-                          placeholder="Confirmar Email"
+                          placeholder="Rol de Registro"
                           className="form-control"
-                          {...register("email_confirmation", {
-                            required: "La confirmación del email es obligatoria",
-                            validate: (value) =>
-                              value === email || "Los emails no coinciden",
+                          {...register("rol", {
+                            required: "El rol es obligatorio",
                           })}
                         />
-                        <ErrorMessage errors={errors} name="email_confirmation" as="p" className="text-danger" />
+                        <ErrorMessage
+                          errors={errors}
+                          name="rol"
+                          as="p"
+                          className="text-danger"
+                        />
                       </div>
                       <div className="mb-3">
                         <label htmlFor="password" className="form-label">
@@ -131,29 +149,23 @@ function Register() {
                             required: "El password es obligatorio",
                             minLength: {
                               value: 8,
-                              message: "El password debe tener al menos 8 caracteres",
+                              message:
+                                "El password debe tener al menos 8 caracteres",
                             },
                           })}
                         />
-                        <ErrorMessage errors={errors} name="password" as="p" className="text-danger" />
-                      </div>
-                      <div className="mb-3">
-                        <label htmlFor="password_confirmation" className="form-label">
-                          Repetir Password
-                        </label>
-                        <input
-                          id="password_confirmation"
-                          type="password"
-                          placeholder="Repetir Password"
-                          className="form-control"
-                          {...register("password_confirmation", {
-                            required: "La confirmación del password es obligatoria",
-                            validate: (value) =>
-                              value === password || "Los passwords no coinciden",
-                          })}
+                        <ErrorMessage
+                          errors={errors}
+                          name="password"
+                          as="p"
+                          className="text-danger"
                         />
-                        <ErrorMessage errors={errors} name="password_confirmation" as="p" className="text-danger" />
                       </div>
+
+                      {registerError && (
+                        <p className="text-danger">{registerError}</p>
+                      )}
+
                       <div className="d-grid">
                         <input
                           type="submit"

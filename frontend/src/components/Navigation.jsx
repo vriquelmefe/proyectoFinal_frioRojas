@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Button from 'react-bootstrap/Button';
 import Container from 'react-bootstrap/Container';
@@ -8,9 +8,17 @@ import { useCart } from '../contexts/CartContext.jsx';
 
 function Navigation() {
   const { obtenerTotalPrecio } = useCart(); 
-  const [isLoggedIn, setIsLoggedIn] = React.useState(true);
+  const [isLoggedIn, setIsLoggedIn] = React.useState(false);
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      setIsLoggedIn(true);
+    }
+  }, []);
 
   const handleLogout = () => {
+    localStorage.removeItem("token");
     setIsLoggedIn(false); 
   };
 
@@ -36,9 +44,6 @@ function Navigation() {
 
           {isLoggedIn ? (
             <>
-              <Link to="/register" className='mx-3 pt-2'>
-                <Button variant="outline-info" className="text-white">🔒 Registro</Button>
-              </Link>
               <Link to="/" className='mx-3 pt-2'>
                 <Button
                   variant="outline-info"
