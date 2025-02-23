@@ -11,13 +11,29 @@ const pool = new Pool({
 
 const obtenerUsuario = async (email) => {
   try {
-    const consulta = `select * from usuarios where email = $1`;
+    const consulta = `select nombre,email,rol from usuarios where email = $1`;
     const { rows, rowCount } = await pool.query(consulta, [email]);
 
     if (!rowCount) {
       throw { message: "error al cargar informacion", code: 404 };
     }
     return rows;
+  } catch (error) {
+    throw error;
+  }
+};
+
+const obtenerUsuarioId = async (id) => {
+  try {
+    const consulta = `select nombre,email from usuarios where id_usuario = $1`;
+    //console.log(consulta, id);
+    const { rows, rowCount } = await pool.query(consulta, [id]);
+    //console.log(rowCount, rows);
+    if (!rowCount) {
+      throw { message: "error al cargar informacion", code: 404 };
+    }
+    //console.log(rows);
+    return rows[0];
   } catch (error) {
     throw error;
   }
@@ -122,9 +138,10 @@ const obtenerFavoritos = async (email) => {
 };
 const obtenerVentas = async (email) => {
   try {
-    const consulta = `select * from ventas where email = $1`;
+    const consulta = `select * from ventas where id_comprador=(select id_usuario from usuarios where email = $1)`;
     const { rows, rowCount } = await pool.query(consulta, [email]);
 
+    // console.log(rows);
     if (!rowCount) {
       throw { message: "error al cargar informacion", code: 404 };
     }
@@ -136,7 +153,7 @@ const obtenerVentas = async (email) => {
 
 const registrarArticulo = async (nombre, descripcion, precio, stock, url) => {
   try {
-    console.log(nombre, descripcion, precio, stock, url);
+    //console.log(nombre, descripcion, precio, stock, url);
     const consulta = `insert into articulos(nombre_articulo, descripcion, precio, stock, url) values ($1, $2, $3, $4, $5)`;
     const { rows, rowCount } = await pool.query(consulta, [
       nombre,
@@ -145,7 +162,7 @@ const registrarArticulo = async (nombre, descripcion, precio, stock, url) => {
       stock,
       url,
     ]);
-    console.log(rows, rowCount);
+    // console.log(rows, rowCount);
   } catch (error) {
     console.error("Login error:", error);
     res.status(error.code || 500).json({ error: error.message });
@@ -235,6 +252,34 @@ const obtenerArticulos = async (id) => {
   }
 };
 
+const obtenerArticuloPublicacion = async (id) => {
+  try {
+    //console.log(id);
+    const consulta = `select * from articulos where id_producto = (select id_producto from publicacion where id_publicacion= $1)`;
+    //console.log(consulta, id);
+
+    const { rows, rowCount } = await pool.query(consulta, [id]);
+    //console.log(rows);
+    return rows[0];
+  } catch (error) {
+    console.error("Error al obtener producto:", error);
+    throw error;
+  }
+};
+const obtenerArticuloVentas = async (id) => {
+  try {
+    //console.log(id);
+    const consulta = `select * from articulos where id_producto = (select id_producto from publicacion where id_publicacion= $1)`;
+
+    const { rows, rowCount } = await pool.query(consulta, [id]);
+
+    return rows[0];
+  } catch (error) {
+    console.error("Error al obtener producto:", error);
+    throw error;
+  }
+};
+
 const registrarFavorito = async (idComprador, idPublicacion) => {
   try {
     const consulta =
@@ -264,4 +309,7 @@ export {
   precioActual,
   obtenerArticulos,
   registrarFavorito,
+  obtenerUsuarioId,
+  obtenerArticuloPublicacion,
+  obtenerArticuloVentas,
 };

@@ -17,6 +17,9 @@ import {
   precioActual,
   obtenerArticulos,
   registrarFavorito,
+  obtenerUsuarioId,
+  obtenerArticuloPublicacion,
+  obtenerArticuloVentas,
 } from "./consultas.js";
 const port = 3000;
 
@@ -93,14 +96,32 @@ app.get("/articulos/:id", async (req, res) => {
 app.get("/publicaciones", async (req, res) => {
   try {
     const publicaciones = await obtenerPublicaciones();
-
+    //console.log(publicaciones);
     if (!publicaciones) {
       return res
         .status(404)
         .json({ message: "No se encuentran Publicaciones" });
     }
-    //console.log("datos en get", datosUsuario);
-    res.json(publicaciones);
+
+    const datosPublicaciones = await Promise.all(
+      publicaciones.map(async (publicacion) => {
+        //const idPublicacion = publicacion.id_publicacion;
+        const vendedor = await obtenerUsuarioId(publicacion.id_vendedor);
+        const producto = await obtenerArticuloPublicacion(
+          publicacion.id_publicacion
+        );
+        //console.log(publicacion.id_producto);
+        return {
+          ...publicacion,
+          vendedor,
+          producto,
+        };
+      })
+    );
+
+    res.json(datosPublicaciones);
+
+    //res.json(publicacion, vendedor, producto);
     /*res.json({publicaciones: [],});*/
   } catch (error) {
     res
@@ -153,8 +174,24 @@ app.get("/favoritos", async (req, res) => {
         .status(404)
         .json({ message: "No se encuentran favoritos registrados" });
     }
+    const datosPublicaciones = await Promise.all(
+      favoritos.map(async (publicacion) => {
+        //const idPublicacion = publicacion.id_publicacion;
 
-    res.send(favoritos);
+        const vendedor = await obtenerUsuarioId(publicacion.id_usuario);
+        const producto = await obtenerArticuloPublicacion(
+          publicacion.id_publicacion
+        );
+        //console.log(vendedor, producto, "publicacion: ", publicacion);
+        return {
+          ...publicacion,
+          vendedor,
+          producto,
+        };
+      })
+    );
+
+    res.json(datosPublicaciones);
 
     /* res.json({
       publicaciones: [
@@ -190,13 +227,28 @@ app.get("/ventas", async (req, res) => {
     const { email } = verify;
 
     const ventas = await obtenerVentas(email);
+
     if (!ventas) {
       return res
         .status(404)
         .json({ message: "No se encuentran Compras registradas" });
     }
 
-    res.send(ventas);
+    const datosVentas = await Promise.all(
+      ventas.map(async (venta) => {
+        const comprador = await obtenerUsuarioId(venta.id_comprador);
+        const producto = await obtenerArticuloVentas(venta.id_publicacion);
+
+        return {
+          ...venta,
+          comprador,
+          producto,
+        };
+      })
+    );
+
+    res.json(datosVentas);
+
     /*res.json({
       ventas: [
         {
@@ -217,6 +269,7 @@ app.get("/ventas", async (req, res) => {
 app.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
+    //console.log(email, password);
 
     if (!email || !password) {
       return res.status(400).json({ error: "Credenciales faltantes" });
@@ -333,7 +386,7 @@ app.post("/ventas", async (req, res) => {
     const { email } = verify;
     const idComprador = await usuarioActual(email);
     const precio = await precioActual(idPublicacion);
-    console.log(precio, idPublicacion, idComprador);
+    // console.log(precio, idPublicacion, idComprador);
     await registrarVenta(idPublicacion, idComprador, precio);
     res.json({
       message: "Venta registrado con exito",
@@ -347,7 +400,7 @@ app.post("/favoritos", async (req, res) => {
   try {
     const { idPublicacion } = req.body;
     const autorization = req.header("Authorization");
-    console.log(idPublicacion);
+    //console.log(idPublicacion);
     if (!autorization) {
       return res.status(401).json({ message: "No se proporcionó un token" });
     }
