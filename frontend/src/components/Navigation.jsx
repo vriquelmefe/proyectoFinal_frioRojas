@@ -22,16 +22,16 @@ function Navigation() {
             <img
               alt="Logo Frio Rojas"
               src={'logo.png'}
-              width="150"
-              height="150"
-              className="d-inline-block align-top"
+              width="120"
+              height="120"
+              className="d-inline-block align-top p-2"
             />
           </Navbar.Brand>
         </Link>
 
         <Nav className="me-auto my-4 my-lg-0" style={{ maxHeight: '100px' }} navbarScroll>
           <Link to="/" className='pt-2'>
-            <Button variant="outline-info" className="text-white"> Home</Button>
+            <Button variant="outline-info" className="text-white"> Inicio</Button>
           </Link>
 
           {isLoggedIn ? (
@@ -45,7 +45,7 @@ function Navigation() {
                   className="text-white"
                   onClick={handleLogout}
                 >
-                  🔒 Logout
+                  🔒 Cerrar sesión
                 </Button>
               </Link>
             </>
@@ -56,11 +56,11 @@ function Navigation() {
                   variant="outline-info"
                   className="text-white"
                 >
-                  🔐 Login
+                  🔐 Iniciar sesión
                 </Button>
               </Link>
               <Link to="/register" className='pt-2'>
-                <Button variant="outline-info" className="text-white">🔐 Register</Button>
+                <Button variant="outline-info" className="text-white">🔐 Registrarse</Button>
               </Link>
             </>
           )}
@@ -68,7 +68,7 @@ function Navigation() {
 
         <Nav className='justify-content-end ms-auto'>
           <Link to="/cart">
-            <Button variant="outline-light">
+            <Button variant="outline-info" className='text-white'>
               🛒 Total: {obtenerTotalPrecio()}
             </Button>
           </Link>

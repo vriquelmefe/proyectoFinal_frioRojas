@@ -1,6 +1,8 @@
 import { Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { ErrorMessage } from "@hookform/error-message";
+import axios from 'axios'
+import { ENDPOINT } from '../../config/constants'
 
 function Register() {
   const {
@@ -23,7 +25,18 @@ function Register() {
   const email = watch("email");
 
   const handleRegister = (formData) => {
-    console.log(formData);
+
+    axios.post(ENDPOINT.register, formData)
+      .then(() => {
+        console.log('entre')
+        window.alert('Usuario registrado con éxito 😀.')
+        //navigate('/login')
+      })
+      .catch(({ response: { data } }) => {
+        console.error(data)
+        window.alert(`${data.message} 🙁.`)
+      })
+
   };
 
   return (

@@ -20,8 +20,8 @@ import {
 } from "./consultas.js";
 const port = 3000;
 
-app.use(cors());
 app.use(express.json());
+app.use(cors());
 
 //get usuario
 app.get("/usuario", async (req, res) => {
@@ -240,6 +240,7 @@ app.post("/login", async (req, res) => {
 
 //post register
 app.post("/register", async (req, res) => {
+  console.log('Hola')
   try {
     const { nombre, email, rol, password } = req.body;
 
@@ -260,6 +261,7 @@ app.post("/register", async (req, res) => {
         email: "uncorreo",
       });*/
   } catch (error) {
+    console.log('eror', error)
     res.status(error.code || 500).json({ error });
   }
 });
