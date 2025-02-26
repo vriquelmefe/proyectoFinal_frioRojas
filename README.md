@@ -2,103 +2,47 @@
 
 Este proyecto es una aplicación web para la gestión de productos de refrigeración y climatización. La aplicación incluye un frontend desarrollado con React y Vite, y un backend desarrollado con Node.js y Express, utilizando una base de datos PostgreSQL.
 
-## Estructura del Proyecto
-
-proyectoFinal_frioRojas/
-├── backend/
-│   ├── BD_script.sql
-│   ├── consultas.js
-│   ├── index.js
-│   ├── package.json
-│   ├── tests/
-│   │   └── app.test.js
-│   └── thunder-collection_Proyecto - Final - FrioRojas.json
-├── frontend/
-│   ├── .gitignore
-│   ├── eslint.config.js
-│   ├── index.html
-│   ├── package.json
-│   ├── public/
-│   │   ├── argenta.png
-│   │   ├── danfosspng
-│   │   ├── logo_mcool.png
-│   │   ├── logo.png
-│   │   ├── midea.png
-│   │   ├── vite.svg
-│   │   └── weinguang.png
-│   ├── README.md
-│   ├── src/
-│   │   ├── App.css
-│   │   ├── App.jsx
-│   │   ├── assets/
-│   │   │   └── images/
-│   │   │       └── react.svg
-│   │   ├── components/
-│   │   │   ├── AddPost.jsx
-│   │   │   ├── Cart.jsx
-│   │   │   ├── ErrorMessage.jsx
-│   │   │   ├── Favorites.jsx
-│   │   │   ├── Header.jsx
-│   │   │   ├── Navigation.jsx
-│   │   │   ├── ProductDetail.jsx
-│   │   │   └── Productos.jsx
-│   │   ├── contexts/
-│   │   │   ├── CartContext.jsx
-│   │   │   └── Context.jsx
-│   │   ├── data/
-│   │   │   └── data.js
-│   │   ├── hooks/
-│   │   │   └── useDeveloper.js
-│   │   ├── index.css
-│   │   ├── main.jsx
-│   │   ├── types/
-│   │   │   └── index.tsx
-│   │   └── views/
-│   │       ├── home/
-│   │       │   └── index.jsx
-│   │       ├── login/
-│   │       │   └── index.jsx
-│   │       └── register/
-│   │           └── index.jsx
-│   └── vite.config.js
-
 ## Instalación
 
 ### Backend
 
 1. Navega a la carpeta `backend`:
-    ```sh
-    cd backend
-    ```
+
+   ```sh
+   cd backend
+   ```
 
 2. Instala las dependencias:
-    ```sh
-    npm install
-    ```
+
+   ```sh
+   npm install
+   ```
 
 3. Configura la base de datos PostgreSQL utilizando el script [BD_script.sql](http://_vscodecontentref_/31).
 
 4. Inicia el servidor:
-    ```sh
-    node index.js
-    ```
+   ```sh
+   node index.js
+   ```
 
 ### Frontend
 
 1. Navega a la carpeta [frontend](http://_vscodecontentref_/32):
-    ```sh
-    cd frontend
-    ```
+
+   ```sh
+   cd frontend
+   ```
 
 2. Instala las dependencias:
-    ```sh
-    npm install
-    ```
+
+   ```sh
+   npm install
+   ```
 
 3. Inicia la aplicación:
-    ```sh
-    npm run dev
-    ```
+   ```sh
+   npm run dev
+   ```
 
 ## Scripts
 
