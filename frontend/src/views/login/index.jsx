@@ -1,7 +1,7 @@
 import { useForm } from "react-hook-form";
 import { Card, Form, Button } from "react-bootstrap";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 function Login() {
   const navigate = useNavigate();
@@ -35,17 +35,19 @@ function Login() {
 
       const result = await response.json();
       console.log("Token:", result.token);
-      // Aquí puedes guardar el token en el almacenamiento local o en el estado de la aplicación
       localStorage.setItem("token", result.token);
       alert("Inicio de sesión exitoso");
-      navigate("/"); // Redirigir a la página de inicio
+      navigate("/");
     } catch (error) {
       console.error("Error:", error);
-      setLoginError("Error al iniciar sesión. Por favor, verifica tus credenciales.");
+      setLoginError(
+        "Error al iniciar sesión. Por favor, verifica tus credenciales."
+      );
     }
   };
 
   return (
+    <>
     <div className="container mt-5">
       <div className="row justify-content-center">
         <div className="col-md-8">
@@ -82,9 +84,7 @@ function Login() {
                       )}
                     </Form.Group>
 
-                    {loginError && (
-                      <p className="text-danger">{loginError}</p>
-                    )}
+                    {loginError && <p className="text-danger">{loginError}</p>}
 
                     <div className="d-grid">
                       <Button
@@ -112,6 +112,12 @@ function Login() {
         </div>
       </div>
     </div>
+    <nav className="mt-4 text-center">
+        <Link to="/register" className="text-decoration-none">
+          ¿No tienes una cuenta? Regístrate
+        </Link>
+      </nav>
+    </>
   );
 }
 
