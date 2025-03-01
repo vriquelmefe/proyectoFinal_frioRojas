@@ -1,108 +1,123 @@
-import { Card } from "react-bootstrap";
-import { useNavigate } from "react-router-dom";
-import { Context } from "../../contexts/Context";
-import { useContext } from "react";
+import { useForm } from "react-hook-form";
+import { Card, Form, Button } from "react-bootstrap";
+import { useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
+
 function Login() {
-  const { logOut, tokenData, token } = useContext(Context);
+  const navigate = useNavigate();
+
+  const initialValues = {
+    email: "",
+    password: "",
+  };
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({ defaultValues: initialValues });
+
+  const [loginError, setLoginError] = useState("");
+
+  const handleLogin = async (data) => {
+    try {
+      const response = await fetch("http://localhost:3000/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+
+      if (!response.ok) {
+        throw new Error("Error en la solicitud");
+      }
+
+      const result = await response.json();
+      console.log("Token:", result.token);
+      localStorage.setItem("token", result.token);
+      alert("Inicio de sesión exitoso");
+      navigate("/");
+    } catch (error) {
+      console.error("Error:", error);
+      setLoginError(
+        "Error al iniciar sesión. Por favor, verifica tus credenciales."
+      );
+    }
+  };
 
   return (
-    <nav
-      className="navbar navbar-expand-lg navbar-dark no-margin no-padding navegation"
-      style={{ background: "black" }}
-    >
-      <div className="container-fluid">
-        <h3 className="navbar-brand ms-2" href="#">
-          Pizzeria Mamma Mia!
-        </h3>
-        <Link
-          className="btn btn-outline-light me-2 transparent-btn d-flex align-items-center"
-          to="/"
-        >
-          <img src="../img/pizza3.png" className="icon" alt="Pizza" />
-          HOME
-        </Link>
-        <div className="navbar navbar-expand-lg navbar-dark no-margin no-padding navegation">
-          {tokenData || token ? (
-            <>
-              <Link
-                className={`btn btn-outline-light me-2 transparent-btn d-flex align-items-center `}
-                type="button"
-                id="Profile"
-                to="/profile"
-              >
-                <img
-                  src="../img/candado abierto.png"
-                  className="icon"
-                  alt="Profile"
-                />
-                Profile
-              </Link>
-              <Link
-                className={`btn btn-outline-light me-2 transparent-btn d-flex align-items-center `}
-                type="button"
-                id="Logout"
-                onClick={() => {
-                  logOut();
-                }}
-                to="/"
-              >
-                <img
-                  src="../img/candado cerrado.png"
-                  className="icon"
-                  alt="LogOut"
-                />
-                LogOut
-              </Link>
-            </>
-          ) : (
-            <>
-              <Link
-                className={`btn btn-outline-light me-2 transparent-btn d-flex align-items-center `}
-                type="button"
-                id="Login"
-                //onClick={() => setShowModalLogin(true)}
-                to="/login"
-              >
-                <img
-                  src="../img/candadoConLlave2.png"
-                  className="icon"
-                  alt="Login"
-                />
-                Login
-              </Link>
+    <>
+    <div className="container mt-5">
+      <div className="row justify-content-center">
+        <div className="col-md-8">
+          <Card className="shadow-lg">
+            <div className="row g-0">
+              <div className="col-md-8">
+                <Card.Body className="p-4">
+                  <Form onSubmit={handleSubmit(handleLogin)}>
+                    <Form.Group className="mb-3" controlId="formBasicEmail">
+                      <Form.Label>Email</Form.Label>
+                      <Form.Control
+                        type="email"
+                        placeholder="Enter email"
+                        {...register("email", {
+                          required: "Email is required",
+                        })}
+                      />
+                      {errors.email && (
+                        <p className="text-danger">{errors.email.message}</p>
+                      )}
+                    </Form.Group>
 
-              <Link
-                className={`btn btn-outline-light me-2 transparent-btn d-flex align-items-center `}
-                type="button"
-                id="Register"
-                //onClick={() => setShowModal(true)}
-                to="/register"
-              >
+                    <Form.Group className="mb-3" controlId="formBasicPassword">
+                      <Form.Label>Password</Form.Label>
+                      <Form.Control
+                        type="password"
+                        placeholder="Password"
+                        {...register("password", {
+                          required: "Password is required",
+                        })}
+                      />
+                      {errors.password && (
+                        <p className="text-danger">{errors.password.message}</p>
+                      )}
+                    </Form.Group>
+
+                    {loginError && <p className="text-danger">{loginError}</p>}
+
+                    <div className="d-grid">
+                      <Button
+                        type="submit"
+                        style={{
+                          backgroundColor: "#1D1F3D",
+                          borderColor: "#1D1F3D",
+                        }}
+                      >
+                        Iniciar sesión
+                      </Button>
+                    </div>
+                  </Form>
+                </Card.Body>
+              </div>
+              <div className="col-md-4">
                 <img
-                  src="../img/candadoConLlave3.png"
-                  className="icon"
-                  alt="Register"
+                  src="./public/logo.png"
+                  className="img-fluid rounded-end"
+                  alt="Imagen de login"
                 />
-                Register
-              </Link>
-            </>
-          )}
-          ;
-        </div>
-
-        <div className="container d-flex justify-content-end">
-          <Link
-            className="btn btn-outline-light me-2 mt-1 gap-4 p-0  transparent-btn d-flex column justify-content-center align-items-center"
-            type="button"
-            to="/Cart"
-          >
-            <p> 🛒 Total: ${getTotal()}</p>
-
-            <p>Cantidad: {getQuantity()} U </p>
-          </Link>
+              </div>
+            </div>
+          </Card>
         </div>
       </div>
-    </nav>
+    </div>
+    <nav className="mt-4 text-center">
+        <Link to="/register" className="text-decoration-none">
+          ¿No tienes una cuenta? Regístrate
+        </Link>
+      </nav>
+    </>
   );
 }
 
