@@ -1,22 +1,72 @@
 import { useNavigate, useParams } from "react-router-dom";
 import { Container, Row, Col, Card, Pagination, Button } from "react-bootstrap";
-import { useState } from "react";
-import productosData from "../data/data";
+import { useState, useEffect } from "react";
+//import productosData from "../data/data";
 import { useCart } from "../contexts/CartContext";
 
 const Productos = () => {
   const { categoria } = useParams();
-  const productos = productosData[categoria] || [];
+  const [cargando, setCargando] = useState(true);
+  const [error, setError] = useState(null);
   const productosPorPagina = 6;
   const [paginaActual, setPaginaActual] = useState(1);
-  const navigate = useNavigate();
-  const { favoritos, toggleFavorito } = useCart();
 
-  const totalPaginas = Math.ceil(productos.length / productosPorPagina);
-  const productosPaginados = productos.slice(
+  const navigate = useNavigate();
+  const {
+    favoritos,
+    toggleFavorito,
+    totalProductos,
+    setTotalProductos,
+    productos,
+    setProductos,
+  } = useCart();
+
+  useEffect(() => {
+    const cargarProductos = async () => {
+      try {
+        setCargando(true);
+        //console.log("antes del url");
+        const url = new URL("http://localhost:3000/productos/");
+        //console.log("aqui productos");
+
+        if (categoria) {
+          url.pathname += categoria;
+        }
+
+        url.searchParams.append("pagina", paginaActual.toString());
+        url.searchParams.append("porPagina", productosPorPagina.toString());
+        //console.log(url);
+
+        const respuesta = await fetch(url);
+        //console.log(respuesta);
+        if (!respuesta.ok) {
+          throw new Error(
+            `Error en la respuesta del servidor: ${respuesta.status}`
+          );
+        }
+        const datos = await respuesta.json();
+        //console.log(datos);
+
+        setProductos(datos || []);
+        setTotalProductos(datos.length || 0);
+        //console.log(datos);
+      } catch (err) {
+        console.error("Error al cargar productos:", err);
+        setError("No se pudieron cargar los productos");
+        setCargando(false);
+      } finally {
+        setCargando(false);
+      }
+    };
+
+    cargarProductos();
+  }, [categoria, paginaActual, productosPorPagina]);
+
+  const totalPaginas = Math.ceil(totalProductos / productosPorPagina);
+  /*const productosPaginados = productos.slice(
     (paginaActual - 1) * productosPorPagina,
     paginaActual * productosPorPagina
-  );
+  );*/
 
   const manejarPagina = (pagina) => {
     setPaginaActual(pagina);
@@ -25,29 +75,42 @@ const Productos = () => {
   const verDetalle = (id) => {
     navigate(`/producto/${id}`);
   };
-
+  if (cargando) return <p className="text-center">Cargando productos...</p>;
+  if (error) return <p className="text-center">Error: {error}</p>;
   return (
     <Container className="my-8">
-      <h2 className="text-center">Productos - {categoria.replace("-", " ")}</h2>
+      <h2 className="text-center">
+        Productos - {categoria ? categoria.replace("-", " ") : "Todos"}
+      </h2>
       <Row className="justify-content-center">
-        {productosPaginados.length > 0 ? (
-          productosPaginados.map((producto) => (
-            <Col key={producto.id} md={4} className="mb-4">
+        {productos.length > 0 ? (
+          productos.map((producto) => (
+            <Col key={producto.id_producto} md={4} className="mb-4">
               <Card className="card-custom text-center">
-                <Card.Img variant="top" src={producto.imagen} alt={producto.nombre} />
+                <Card.Img
+                  variant="top"
+                  src={producto.url}
+                  alt={producto.nombre_articulo}
+                />
                 <Card.Body>
                   <div className="d-flex justify-content-between align-items-center">
-                    <Card.Title>{producto.nombre}</Card.Title>
+                    <Card.Title>{producto.nombre_articulo}</Card.Title>
                     <Button
                       variant="link"
                       className="favorito-btn"
-                      onClick={() => toggleFavorito(producto.id)}
+                      onClick={() => toggleFavorito(producto.id_producto)}
                     >
-                      {favoritos[producto.id] ? "❤️" : "🤍"}
+                      {favoritos[producto.id_producto] ? "❤️" : "🤍"}
                     </Button>
                   </div>
                   <Card.Text>{producto.precio}</Card.Text>
-                  <Button variant="primary" onClick={() => verDetalle(producto.id)}>
+                  <Card.Text className="text-truncate">
+                    {producto.descripcion}
+                  </Card.Text>
+                  <Button
+                    variant="primary"
+                    onClick={() => verDetalle(producto.id_producto)}
+                  >
                     Ver Detalle
                   </Button>
                 </Card.Body>

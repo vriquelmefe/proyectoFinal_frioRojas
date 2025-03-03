@@ -5,7 +5,7 @@ const pool = new Pool({
   host: "localhost",
   user: "postgres",
   password: "Pnuevo987",
-  database: "frioRojas",
+  database: "friorojas",
   allowExitOnIdle: true,
 });
 
@@ -252,6 +252,18 @@ const obtenerArticulos = async (id) => {
   }
 };
 
+const obtenerArticulosCategoria = async (categoria) => {
+  try {
+    //console.log(categoria);
+    const consulta = `select * from articulos where categoria = $1`;
+    const { rows, rowCount } = await pool.query(consulta, [categoria]);
+    return rows;
+  } catch (error) {
+    console.error("Error al obtener producto:", error);
+    throw error;
+  }
+};
+
 const obtenerArticuloPublicacion = async (id) => {
   try {
     //console.log(id);
@@ -312,4 +324,5 @@ export {
   obtenerUsuarioId,
   obtenerArticuloPublicacion,
   obtenerArticuloVentas,
+  obtenerArticulosCategoria,
 };

@@ -13,7 +13,9 @@ const Favorites = () => {
     .filter((id) => favoritos[id])
     .map((id) => {
       for (let categoria in productosData) {
-        const producto = productosData[categoria].find((p) => p.id === parseInt(id));
+        const producto = productosData[categoria].find(
+          (p) => p.id === parseInt(id)
+        );
         if (producto) return producto;
       }
       return null;
@@ -26,18 +28,33 @@ const Favorites = () => {
       <Row className="justify-content-center">
         {productosFavoritos.length > 0 ? (
           productosFavoritos.map((producto) => (
-            <Col key={producto.id} md={4} className="mb-4">
+            <Col key={producto.id_producto} md={4} className="mb-4">
               <Card className="card-custom text-center">
-                <Card.Img variant="top" src={producto.imagen} alt={producto.nombre} />
+                <Card.Img
+                  variant="top"
+                  src={producto.url}
+                  alt={producto.nombre_articulo}
+                />
                 <Card.Body>
                   <div className="d-flex justify-content-between align-items-center">
-                    <Card.Title>{producto.nombre}</Card.Title>
-                    <Button variant="link" className="favorito-btn" onClick={() => toggleFavorito(producto.id)}>
+                    <Card.Title>{producto.nombre_articulo}</Card.Title>
+                    <Button
+                      variant="link"
+                      className="favorito-btn"
+                      onClick={() => toggleFavorito(producto.id_producto)}
+                    >
                       ❤️
                     </Button>
                   </div>
                   <Card.Text>{producto.precio}</Card.Text>
-                  <Button variant="primary" onClick={() => navigate(`/producto/${producto.id}`)}>Ver Detalle</Button>
+                  <Button
+                    variant="primary"
+                    onClick={() =>
+                      navigate(`/producto/${producto.id_producto}`)
+                    }
+                  >
+                    Ver Detalle
+                  </Button>
                 </Card.Body>
               </Card>
             </Col>

@@ -20,6 +20,7 @@ import {
   obtenerUsuarioId,
   obtenerArticuloPublicacion,
   obtenerArticuloVentas,
+  obtenerArticulosCategoria,
 } from "./consultas.js";
 const port = 3000;
 
@@ -62,13 +63,15 @@ app.get("/usuario", async (req, res) => {
       .json({ message: error.message || "Error interno del servidor" });
   }
 });
-//get Articulos
-app.get("/articulos", async (req, res) => {
+//get Productos
+app.get("/productos", async (req, res) => {
   try {
+    // console.log("/productos");
     const articulos = await obtenerArticulos();
     if (!articulos) {
       return res.status(404).json({ message: "No se encuentran Articulos" });
     }
+    //console.log(articulos);
     res.json(articulos);
   } catch (error) {
     res
@@ -77,13 +80,15 @@ app.get("/articulos", async (req, res) => {
   }
 });
 
-app.get("/articulos/:id", async (req, res) => {
+app.get("/producto/:id", async (req, res) => {
   try {
     const { id } = req.params;
+    //console.log(id);
     const articulos = await obtenerArticulos(id);
     if (!articulos) {
       return res.status(404).json({ message: "No se encuentran Articulos" });
     }
+    //console.log(articulos);
     res.json(articulos);
   } catch (error) {
     res
@@ -91,7 +96,26 @@ app.get("/articulos/:id", async (req, res) => {
       .json({ message: error.message || "Error interno del servidor" });
   }
 });
-
+//articulos categoria
+app.get("/productos/:categoria", async (req, res) => {
+  try {
+    //console.log("/productos/:categoria");
+    const { categoria } = req.params;
+    //console.log(categoria);
+    const articulos = await obtenerArticulosCategoria(categoria);
+    if (!articulos) {
+      return res
+        .status(404)
+        .json({ message: "No se encuentran Articulos en esa Categoria" });
+    }
+    //console.log(articulos);
+    res.json(articulos);
+  } catch (error) {
+    res
+      .status(error.code || 500)
+      .json({ message: error.message || "Error interno del servidor" });
+  }
+});
 // get publicaciones
 app.get("/publicaciones", async (req, res) => {
   try {
