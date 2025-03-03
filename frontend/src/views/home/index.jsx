@@ -67,10 +67,11 @@ function Home() {
           ))}
         </Row>
       </Container>
-
-      <Container className="my-5">
+      <div className="bg-dark text-white">
+        
+      <Container>
         <Row>
-          <Col md={6} className="bg-dark text-white p-5 rounded-start shadow-lg">
+          <Col md={6} className=" p-5 rounded-start">
             <h2 className="fw-bold mb-4 display-5">CONTÁCTANOS</h2>
             <h3 className="mb-4">Contacto desde Sitio Web Friorgias.cl</h3>
             <Form>
@@ -86,12 +87,12 @@ function Home() {
                 <Form.Label>Mensaje *</Form.Label>
                 <Form.Control as="textarea" rows={3} required className="rounded-3 border-0 shadow-sm" />
               </Form.Group>
-              <Button variant="outline-light" type="submit" className="rounded-3 shadow-sm">
+              <Button variant="outline-light-blue" type="submit" className="rounded-3 bg-dark text-white">
                 Enviar Consultas
               </Button>
             </Form>
           </Col>
-          <Col md={6} className="bg-secondary text-white p-5 rounded-end shadow-lg">
+          <Col md={6} className="text-white p-5 rounded-end shadow-lg">
             <h3 className="fw-bold mb-4 display-5">Ubicación Casa Matriz</h3>
             <p className="mb-4">Nueva de Valdes 944</p>
             <iframe
@@ -105,6 +106,7 @@ function Home() {
           </Col>
         </Row>
       </Container>
+</div>
 
 
       <footer className="bg-dark text-white py-4 text-center">

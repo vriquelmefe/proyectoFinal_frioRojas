@@ -1,6 +1,9 @@
 import { useState } from 'react';
 import Carousel from 'react-bootstrap/Carousel';
 import Image from 'react-bootstrap/Image';
+import carusel1 from '../../public/climatizacion.jpg'
+import carusel2 from '/r-10.jpeg'
+import carusel3 from '/repuesto-2.jpg'
 
 function Header() {
   const [index, setIndex] = useState(0);
@@ -10,10 +13,10 @@ function Header() {
   };
 
   return (
-    <Carousel activeIndex={index} onSelect={handleSelect} className="bg-dark items-center">
+    <Carousel activeIndex={index} onSelect={handleSelect} className="bg-dark items-center h-50">
       <Carousel.Item className="justify-content-center align-items-center">
         <Image 
-          src="https://picsum.photos/800/400?random&gravity=center&blur=5" 
+          src={carusel1}
           className="d-block mx-auto w-75 rounded-3" 
           alt="Evaporador de Aire"
         />
@@ -25,7 +28,7 @@ function Header() {
       
       <Carousel.Item className="justify-content-center align-items-center">
         <Image 
-          src="https://picsum.photos/800/400?random&gravity=center&blur=5" 
+          src={carusel2}
           className="d-block mx-auto w-75 rounded-3" 
           alt="Termostato Digital"
         />
@@ -37,7 +40,7 @@ function Header() {
 
       <Carousel.Item className="justify-content-center align-items-center">
         <Image 
-          src="https://picsum.photos/800/400?random&gravity=center&blur=5" 
+          src={carusel3}
           className="d-block mx-auto w-75 rounded-3" 
           alt="Ventilador de Enfriamiento"
         />

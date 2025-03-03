@@ -27,7 +27,7 @@ const Favorites = () => {
         {productosFavoritos.length > 0 ? (
           productosFavoritos.map((producto) => (
             <Col key={producto.id} md={4} className="mb-4">
-              <Card className="card-custom text-center">
+              <Card className="border border-gray shadow text-center">
                 <Card.Img variant="top" src={producto.imagen} alt={producto.nombre} />
                 <Card.Body>
                   <div className="d-flex justify-content-between align-items-center">

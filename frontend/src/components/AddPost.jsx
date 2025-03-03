@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Button, Form, Card } from "react-bootstrap";
+import { Button, Form, Card, Container } from "react-bootstrap";
 
 const AddPost = () => {
   const [formData, setFormData] = useState({
@@ -25,7 +25,10 @@ const AddPost = () => {
   };
 
   return (
-    <Card className="shadow" >
+    <Container className="my-5 p-5">
+
+
+    <Card className="shadow p-3" >
       <Card.Header className="bg-dark text-white">
         <h4>Agregar Publicación</h4>
       </Card.Header>
@@ -66,12 +69,19 @@ const AddPost = () => {
             <Form.Label>Imagen</Form.Label>
             <Form.Control type="file" name="image" onChange={handleImageChange} required />
           </Form.Group>
+          <Form.Group>
+          <Form.Label>select menu</Form.Label>
+        <Form.Select>
+          <option> select</option>
+        </Form.Select>
+          </Form.Group>
           <Button variant="primary" type="submit">
             Publicar
           </Button>
         </Form>
       </Card.Body>
-    </Card>
+      </Card>
+      </Container>
   );
 };
 
