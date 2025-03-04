@@ -1,198 +1,329 @@
-const { Pool } = require("pg");
-const bcrypt = require("bcryptjs");
-
+import bcrypt from "bcryptjs";
+import pkg from "pg";
+const { Pool } = pkg;
 const pool = new Pool({
   host: "localhost",
   user: "postgres",
   password: "password",
-  port: 5433,
   database: "friorojas",
+  port: 5433,
   allowExitOnIdle: true,
 });
 
-// Registro de usuario
-const registroUsuario = async (nombre, email, rol, password) => {
-  try {
-    const passwordEncriptada = bcrypt.hashSync(password);
-    password = passwordEncriptada;
-    const consulta = `INSERT INTO usuarios (nombre, email, rol, password) VALUES ($1, $2, $3, $4)`;
-    const valores = [nombre, email, rol, passwordEncriptada];
-    await pool.query(consulta, valores);
-  } catch (error) {
-    throw { code: 500, status: "No se pudo registrar el usuario" };
-  }
-};
-
-// Login de usuario
-const loginUsuario = async (email, password) => {
-  const values = [email];
-  const consulta = "SELECT * FROM usuarios WHERE email = $1";
-  const {
-    rows: [usuario],
-  } = await pool.query(consulta, values);
-  const { password: passwordEncriptada } = usuario;
-  const passwordEsCorrecta = bcrypt.compareSync(password, passwordEncriptada);
-  if (!passwordEsCorrecta) {
-    throw { code: 401, message: "Email o contraseña incorrecta" };
-  }
-};
-
-// Obtener un usuario
 const obtenerUsuario = async (email) => {
-  const values = [email];
-  const consulta = "SELECT * FROM usuarios WHERE email = $1";
-  const { rows } = await pool.query(consulta, values);
-  return rows[0];
-};
-
-// Ingresa una publicación
-const ingresarPublicacion = async (id_producto, id_usuario) => {
   try {
-    const consulta = `INSERT INTO publicaciones (id_producto, id_usuario) VALUES ($1, $2)`;
-    const valores = [id_producto, id_usuario];
-    await pool.query(consulta, valores);
+    const consulta = `select nombre,email,rol from usuarios where email = $1`;
+    const { rows, rowCount } = await pool.query(consulta, [email]);
+
+    if (!rowCount) {
+      throw { message: "error al cargar informacion", code: 404 };
+    }
+    return rows;
   } catch (error) {
-    throw { code: 500, status: "No se pudo ingresar la publicación" };
+    throw error;
   }
 };
 
-// Obtener publicaciones
-const obtenerPublicaciones = async () => {
+const obtenerUsuarioId = async (id) => {
   try {
-    const result = await pool.query("SELECT * FROM publicaciones");
-    return result.rows;
-  } catch (err) {
-    console.error("Error en la consulta:", err);
-    throw err;
-  }
-};
-
-// Obtener una publicación por ID
-const obtenerPublicacionPorId = async (id) => {
-  try {
-    const values = [id];
-    const consulta = "SELECT * FROM publicaciones WHERE id = $1";
-    const result = await pool.query(consulta, values);
-    return result.rows[0];
-  } catch (err) {
-    console.error("Error en la consulta:", err);
-    throw err;
-  }
-};
-
-// Ingresar articulo
-const ingresarArticulo = async (
-  titulo_nombre,
-  descripcion,
-  precio,
-  stock,
-  url_imagen
-) => {
-  try {
-    const consulta = `INSERT INTO articulos (titulo_nombre, descripcion, precio, stock, url_imagen) VALUES ($1, $2, $3, $4, $5)`;
-    const valores = [titulo_nombre, descripcion, precio, stock, url_imagen];
-    await pool.query(consulta, valores);
+    const consulta = `select nombre,email from usuarios where id_usuario = $1`;
+    //console.log(consulta, id);
+    const { rows, rowCount } = await pool.query(consulta, [id]);
+    //console.log(rowCount, rows);
+    if (!rowCount) {
+      throw { message: "error al cargar informacion", code: 404 };
+    }
+    //console.log(rows);
+    return rows[0];
   } catch (error) {
-    throw { code: 500, status: "No se pudo ingresar el artículo" };
+    throw error;
   }
 };
 
-// Obtener articulos
-const obtenerArticulos = async () => {
+const registrarUsuario = async (nombre, email, rol, password) => {
   try {
-    const result = await pool.query("SELECT * FROM articulos");
-    return result.rows;
-  } catch (err) {
-    console.error("Error en la consulta:", err);
-    throw err;
-  }
-};
+    const passwordEncriptada = bcrypt.hashSync(password, 10);
+    password = passwordEncriptada;
+    const consulta = `insert into usuarios (nombre,email,rol,password) values($1,$2,$3,$4 ) returning id_usuario,nombre,email,rol`;
 
-// Obtener un articulo por ID
-const obtenerArticuloPorId = async (id) => {
-  try {
-    const values = [id];
-    const consulta = "SELECT * FROM articulos WHERE id_producto = $1";
-    const result = await pool.query(consulta, values);
-    return result.rows[0];
-  } catch (err) {
-    console.error("Error en la consulta:", err);
-    throw err;
-  }
-};
+    const { rows, rowCount } = await pool.query(consulta, [
+      nombre,
+      email,
+      rol,
+      password,
+    ]);
 
-// Ingresar venta
-const ingresarVenta = async (id_publicacion, id_usuario_comprador) => {
-  try {
-    const consulta = `INSERT INTO ventas (id_publicacion, id_usuario_comprador) VALUES ($1, $2)`;
-    const valores = [id_publicacion, id_usuario_comprador];
-    await pool.query(consulta, valores);
+    return rows[0];
   } catch (error) {
-    throw { code: 500, status: "No se pudo ingresar la venta" };
+    throw error;
   }
 };
-
-// Obtener ventas
-const obtenerVentas = async () => {
+const usuarioExiste = async (email) => {
   try {
-    const result = await pool.query("SELECT * FROM ventas");
-    return result.rows;
-  } catch (err) {
-    console.error("Error en la consulta:", err);
-    throw err;
-  }
-};
+    const consulta = "select * from usuarios where email = $1";
 
-// Obtener ventas por id
-const obtenerVentasPorId = async (id) => {
-  try {
-    const values = [id];
-    const consulta = "SELECT * FROM ventas WHERE id_venta = $1";
-    const result = await pool.query(consulta, values);
-    return result.rows[0];
-  } catch (err) {
-    console.error("Error en la consulta:", err);
-    throw err;
-  }
-};
+    const { rowCount } = await pool.query(consulta, [email]);
 
-// Ingresar favorito
-const ingresarFavorito = async (id_usuario, id_publicacion) => {
-  try {
-    const consulta = `INSERT INTO favoritos (id_usuario, id_publicacion) VALUES ($1, $2)`;
-    const valores = [id_usuario, id_publicacion];
-    await pool.query(consulta, valores);
+    return rowCount > 0;
   } catch (error) {
-    throw { code: 500, status: "No se pudo ingresar el favorito" };
+    //    console.error("aqui", error);
+    throw new Error(error);
   }
 };
-
-// Obtener favoritos por id
-const obtenerFavoritosPorId = async (id) => {
+const verificarUsuario = async (email, password) => {
   try {
-    const values = [id];
-    const consulta = "SELECT * FROM favoritos WHERE id_usuario = $1";
-    const result = await pool.query(consulta, values);
-    return result.rows;
-  } catch (err) {
-    console.error("Error en la consulta:", err);
-    throw err;
+    const consulta = `select * from usuarios where email = $1`;
+
+    const { rows, rowCount } = await pool.query(consulta, [email]);
+    if (rowCount === 0) {
+      const error = new Error("Usuario no Existe");
+      error.code = 401;
+      throw error;
+    }
+    const usuario = rows[0];
+
+    const { password: passwordEncriptada } = usuario;
+
+    const passwordEsCorrecta = bcrypt.compareSync(password, passwordEncriptada);
+
+    if (!passwordEsCorrecta) {
+      const error = new Error("Contraseña incorrecta");
+      error.code = 401;
+      throw error;
+    }
+
+    return usuario;
+  } catch (error) {
+    console.error("Error verificando usuario:", error);
+    if (error.code && error.message) {
+      throw error;
+    } else {
+      throw { code: 500, message: "Error interno del servidor" };
+    }
+  }
+};
+const obtenerPublicaciones = async (id) => {
+  try {
+    let consulta, valores;
+
+    if (!id) {
+      consulta = "select * from publicacion";
+      valores = [];
+    } else {
+      consulta = `select * from publicacion where id_publicacion = $1`;
+      valores = [id];
+    }
+    const { rows, rowCount } = await pool.query(consulta, valores);
+    if (!rowCount) {
+      throw { message: "error al cargar informacion", code: 404 };
+    }
+    return rows;
+  } catch (error) {
+    console.error("Error al obtener publicaciones:", error);
+    throw error;
   }
 };
 
-module.exports = {
-  registroUsuario,
-  loginUsuario,
+const obtenerFavoritos = async (email) => {
+  try {
+    const consulta = `select * from favoritos where id_usuario =(select id_usuario from usuarios where email = $1)`;
+    const { rows, rowCount } = await pool.query(consulta, [email]);
+
+    if (!rowCount) {
+      throw { message: "error al cargar informacion", code: 404 };
+    }
+    return rows;
+  } catch (error) {
+    throw error;
+  }
+};
+const obtenerVentas = async (email) => {
+  try {
+    const consulta = `select * from ventas where id_comprador=(select id_usuario from usuarios where email = $1)`;
+    const { rows, rowCount } = await pool.query(consulta, [email]);
+
+    // console.log(rows);
+    if (!rowCount) {
+      throw { message: "error al cargar informacion", code: 404 };
+    }
+    return rows;
+  } catch (error) {
+    throw error;
+  }
+};
+
+const registrarArticulo = async (nombre, descripcion, precio, stock, url) => {
+  try {
+    //console.log(nombre, descripcion, precio, stock, url);
+    const consulta = `insert into articulos(nombre_articulo, descripcion, precio, stock, url) values ($1, $2, $3, $4, $5)`;
+    const { rows, rowCount } = await pool.query(consulta, [
+      nombre,
+      descripcion,
+      precio,
+      stock,
+      url,
+    ]);
+    // console.log(rows, rowCount);
+  } catch (error) {
+    console.error("Login error:", error);
+    res.status(error.code || 500).json({ error: error.message });
+  }
+};
+
+const registarPublicacion = async (idProducto, idVendedor) => {
+  try {
+    //console.log(idProducto, idVendedor);
+    const consulta = `insert into publicacion (id_producto, id_vendedor) values($1, $2)`;
+    const { rows, rowCount } = await pool.query(consulta, [
+      idProducto,
+      idVendedor,
+    ]);
+
+    if (rowCount === 0) {
+      const error = new Error("No se pudo registrar la publicación");
+      error.code = 400;
+      throw error;
+    }
+  } catch (error) {
+    console.error("Error al registrar publicación:", error);
+    throw error;
+  }
+};
+
+const usuarioActual = async (email) => {
+  try {
+    const consulta = "select id_usuario from usuarios where email = $1";
+    const { rows, rowCount } = await pool.query(consulta, [email]);
+
+    if (rowCount === 0) {
+      throw new Error("Usuario no encontrado");
+    }
+
+    return rows[0].id_usuario;
+  } catch (error) {
+    console.error("Error al obtener usuario:", error);
+    throw error;
+  }
+};
+
+const registrarVenta = async (idPublicacion, idComprador, precio) => {
+  try {
+    const consulta = `insert into ventas(id_publicacion, id_comprador, precio_producto) values($1, $2, $3)`;
+    const { rows, rowCount } = await pool.query(consulta, [
+      idPublicacion,
+      idComprador,
+      precio,
+    ]);
+  } catch (error) {
+    res.status(error.code || 500).send(error);
+  }
+};
+const precioActual = async (idPublicacion) => {
+  try {
+    const consulta =
+      "select precio from articulos where id_producto = (select id_producto from publicacion where id_publicacion= $1)";
+    const { rows, rowCount } = await pool.query(consulta, [idPublicacion]);
+
+    if (rowCount === 0) {
+      throw new Error("producto no encontrado");
+    }
+
+    return rows[0].precio;
+  } catch (error) {
+    console.error("Error al obtener producto:", error);
+    throw error;
+  }
+};
+
+const obtenerArticulos = async (id) => {
+  try {
+    let consulta, valores;
+    if (!id) {
+      consulta = "select * from articulos";
+      valores = [];
+    } else {
+      consulta = "select * from articulos where id_producto=$1";
+      valores = [id];
+    }
+    const { rows, rowCount } = await pool.query(consulta, valores);
+    return rows;
+  } catch (error) {
+    console.error("Error al obtener producto:", error);
+    throw error;
+  }
+};
+
+const obtenerArticulosCategoria = async (categoria) => {
+  try {
+    //console.log(categoria);
+    const consulta = `select * from articulos where categoria = $1`;
+    const { rows, rowCount } = await pool.query(consulta, [categoria]);
+    return rows;
+  } catch (error) {
+    console.error("Error al obtener producto:", error);
+    throw error;
+  }
+};
+
+const obtenerArticuloPublicacion = async (id) => {
+  try {
+    //console.log(id);
+    const consulta = `select * from articulos where id_producto = (select id_producto from publicacion where id_publicacion= $1)`;
+    //console.log(consulta, id);
+
+    const { rows, rowCount } = await pool.query(consulta, [id]);
+    //console.log(rows);
+    return rows[0];
+  } catch (error) {
+    console.error("Error al obtener producto:", error);
+    throw error;
+  }
+};
+const obtenerArticuloVentas = async (id) => {
+  try {
+    //console.log(id);
+    const consulta = `select * from articulos where id_producto = (select id_producto from publicacion where id_publicacion= $1)`;
+
+    const { rows, rowCount } = await pool.query(consulta, [id]);
+
+    return rows[0];
+  } catch (error) {
+    console.error("Error al obtener producto:", error);
+    throw error;
+  }
+};
+
+const registrarFavorito = async (idComprador, idPublicacion) => {
+  try {
+    const consulta =
+      "insert into favoritos(id_usuario, id_publicacion)values($1, $2)";
+    const { rows, rowCount } = await pool.query(consulta, [
+      idComprador,
+      idPublicacion,
+    ]);
+  } catch (error) {
+    console.error("Error al Registrar Favoritos:", error);
+    throw error;
+  }
+};
+
+export {
   obtenerUsuario,
-  ingresarPublicacion,
+  registrarUsuario,
+  verificarUsuario,
+  usuarioExiste,
   obtenerPublicaciones,
-  obtenerPublicacionPorId,
-  ingresarArticulo,
-  obtenerArticulos,
-  obtenerArticuloPorId,
-  ingresarVenta,
+  obtenerFavoritos,
   obtenerVentas,
-  obtenerVentasPorId,
-  ingresarFavorito,
-  obtenerFavoritosPorId,
+  registrarArticulo,
+  registarPublicacion,
+  registrarVenta,
+  usuarioActual,
+  precioActual,
+  obtenerArticulos,
+  registrarFavorito,
+  obtenerUsuarioId,
+  obtenerArticuloPublicacion,
+  obtenerArticuloVentas,
+  obtenerArticulosCategoria,
 };

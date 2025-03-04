@@ -18,9 +18,33 @@ const AddPost = () => {
     setFormData({ ...formData, image: e.target.files[0] });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async(e) => {
     e.preventDefault();
-    console.log("Publicación agregada:", formData);
+    console.log("form", formData);
+    try {
+      const response = await fetch("http://localhost:3000/publicacion", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      console.log("Response:", response);
+      if (!response.ok) {
+        throw new Error("Error en la solicitud");
+      }
+
+      const result = await response.json();
+      localStorage.setItem("token", result.token);
+      alert("Publicaciónagregada con exito!");
+      // navigate("/");
+    } catch (error) {
+      console.error("Error:", error);
+      // setLoginError(
+      //   "Error al iniciar sesión. Por favor, verifica tus credenciales."
+      // );
+    }
     alert("Publicación agregada con éxito!");
   };
 
