@@ -1,38 +1,62 @@
-import { useParams } from 'react-router-dom';
-import { Container, Card, Button, Row, Col, Alert } from 'react-bootstrap';
-import productosData from '../data/data';
-import { useCart } from '../contexts/CartContext.jsx'; 
-import { useState, useEffect } from 'react';
+import { useParams } from "react-router-dom";
+import { Container, Card, Button, Row, Col, Alert } from "react-bootstrap";
+//import productosData from '../data/data';
+import { useCart } from "../contexts/CartContext.jsx";
+import { useState, useEffect } from "react";
 
 const ProductDetail = () => {
   const { id } = useParams();
-  const producto = Object.values(productosData)
-    .flat()
-    .find((p) => p.id === parseInt(id));
+  const [producto, setProducto] = useState(null);
+  /*const producto = Object.values(productosData)
+  .flat()
+  .find((p) => p.id === parseInt(id));*/
 
   const { carrito, agregarAlCarrito } = useCart();
   const [cantidad, setCantidad] = useState(1);
   const [mensaje, setMensaje] = useState("");
 
   useEffect(() => {
-    const productoEnCarrito = carrito.find(item => item.id === producto?.id);
-    if (productoEnCarrito) {
-      setCantidad(productoEnCarrito.cantidad);
-    }
-  }, [carrito, producto]);
+    const cargarProducto = async () => {
+      try {
+        const url = `http://localhost:3000/producto/${id}`;
+
+        const respuesta = await fetch(url);
+        //console.log(respuesta);
+        if (!respuesta.ok) {
+          throw new Error(
+            `Error en la respuesta del servidor: ${respuesta.status}`
+          );
+        }
+        const datos = await respuesta.json();
+        //console.log(datos);
+
+        setProducto(datos[0] || null);
+
+        const productoEnCarrito = carrito.find(
+          (item) => item.id_productos === datos?.id_productos
+        );
+        if (productoEnCarrito) {
+          setCantidad(productoEnCarrito.cantidad);
+        }
+      } catch (error) {
+        console.error("Error al cargar productos:", error);
+      }
+    };
+    cargarProducto();
+  }, [carrito, id]);
 
   const handleAgregarCarrito = () => {
     const productoConCantidad = { ...producto, cantidad };
     agregarAlCarrito(productoConCantidad);
-  
-    setMensaje(`${producto.nombre} agregado al carrito!`);
+
+    setMensaje(`${producto.nombre_articulo} agregado al carrito!`);
     setTimeout(() => setMensaje(""), 3000);
   };
-  
+
   if (!producto) {
     return <Container className="my-5">Producto no encontrado.</Container>;
   }
-
+  //console.log(producto);
   return (
     <Container className="my-5">
       <Row>
@@ -40,17 +64,21 @@ const ProductDetail = () => {
           <Card className="text-center">
             <Card.Img
               variant="top"
-              src={producto.imagen}
-              alt={producto.nombre}
-              style={{ maxWidth: '300px', margin: '0 auto' }}
+              src={producto.url}
+              alt={producto.nombre_articulo}
+              style={{ maxWidth: "300px", margin: "0 auto" }}
             />
             <Card.Body>
-              <Card.Title>{producto.nombre}</Card.Title>
+              <Card.Title>{producto.nombre_articulo}</Card.Title>
               <Card.Text>{producto.descripcion}</Card.Text>
               <Card.Text className="fw-bold">{producto.precio}</Card.Text>
 
               <div className="d-flex align-items-center">
-                <Button variant="primary" onClick={handleAgregarCarrito} className="ms-3">
+                <Button
+                  variant="primary"
+                  onClick={handleAgregarCarrito}
+                  className="ms-3"
+                >
                   Agregar al Carrito
                 </Button>
               </div>

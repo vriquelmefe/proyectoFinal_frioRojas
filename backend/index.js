@@ -1,199 +1,451 @@
-const express = require("express");
-const cors = require("cors");
-const jwt = require("jsonwebtoken");
-const {
-  registroUsuario,
-  loginUsuario,
-  obtenerUsuario,
-  obtenerPublicaciones,
-  obtenerPublicacionPorId,
-  ingresarArticulo,
-  obtenerArticulos,
-  ingresarPublicacion,
-  obtenerArticuloPorId,
-  ingresarVenta,
-  obtenerVentas,
-  obtenerVentasPorId,
-  ingresarFavorito,
-  obtenerFavoritosPorId,
-} = require("./consultas.js");
-
-const PORT = 3000;
+import express from "express";
+import cors from "cors";
+import jwt from "jsonwebtoken";
 const app = express();
+import {
+  obtenerUsuario,
+  registrarUsuario,
+  verificarUsuario,
+  usuarioExiste,
+  obtenerPublicaciones,
+  obtenerFavoritos,
+  obtenerVentas,
+  registrarArticulo,
+  registarPublicacion,
+  registrarVenta,
+  usuarioActual,
+  precioActual,
+  obtenerArticulos,
+  registrarFavorito,
+  obtenerUsuarioId,
+  obtenerArticuloPublicacion,
+  obtenerArticuloVentas,
+  obtenerArticulosCategoria,
+} from "./consultas.js";
+const port = 3000;
+
 app.use(cors());
 app.use(express.json());
-app.listen(PORT, console.log("SERVIDOR OK 👍, CORRIENDO EN EL PUERTO:", PORT));
 
-// Registro de usuario
-app.post("/register", async (req, res) => {
-  const { nombre, email, rol, password } = req.body;
+//get usuario
+app.get("/usuario", async (req, res) => {
   try {
-    await registroUsuario(nombre, email, rol, password);
-    res.status(200).send("Usuario registrado con éxito");
+    const autorization = req.header("Authorization");
+    if (!autorization) {
+      return res.status(401).json({ message: "No se proporcionó un token" });
+    }
+    const token = autorization.split(" ")[1];
+    if (!token) {
+      return res.status(401).json({ message: "Token no válido" });
+    }
+    //console.log("Token Actual", autorization);
+
+    const verify = jwt.verify(token, "desafioLatam");
+
+    const { email } = verify;
+
+    const usuario = await obtenerUsuario(email);
+    if (!usuario) {
+      return res.status(404).json({ message: "Usuario no encontrado" });
+    }
+
+    res.send(usuario);
+    /*res.json({
+      usuario: {
+        nombre: "blabla",
+        correo: "blablabla.com",
+        rol: "algo",
+      },
+    });*/
   } catch (error) {
-    res.status(500).send("No se pudo registrar el usuario");
+    res
+      .status(error.code || 500)
+      .json({ message: error.message || "Error interno del servidor" });
+  }
+});
+//get Productos
+app.get("/productos", async (req, res) => {
+  try {
+    // console.log("/productos");
+    const articulos = await obtenerArticulos();
+    if (!articulos) {
+      return res.status(404).json({ message: "No se encuentran Articulos" });
+    }
+    //console.log(articulos);
+    res.json(articulos);
+  } catch (error) {
+    res
+      .status(error.code || 500)
+      .json({ message: error.message || "Error interno del servidor" });
   }
 });
 
-// Login de usuario
-app.post("/login", async (req, res) => {
+app.get("/producto/:id", async (req, res) => {
   try {
-    const { email, password } = req.body;
-    await loginUsuario(email, password);
-    const token = jwt.sign({ email }, "az_AZ", { expiresIn: "1h" });
-    res.send({ token });
+    const { id } = req.params;
+    //console.log(id);
+    const articulos = await obtenerArticulos(id);
+    if (!articulos) {
+      return res.status(404).json({ message: "No se encuentran Articulos" });
+    }
+    //console.log(articulos);
+    res.json(articulos);
   } catch (error) {
-    res.status(error.code).send(error);
+    res
+      .status(error.code || 500)
+      .json({ message: error.message || "Error interno del servidor" });
   }
 });
-
-// Obtener un usuario
-app.get("/usuarios", async (req, res) => {
-  const Authorization = req.header("Authorization");
-  const token = Authorization.split("Bearer ")[1];
-  const { email } = jwt.verify(token, "az_AZ");
-  const user = await obtenerUsuario(email);
-  res.send(user);
-});
-
-// Ingresa una publicación
-app.post("/publicaciones", async (req, res) => {
-  const { id_producto, id_usuario } = req.body;
+//articulos categoria
+app.get("/productos/:categoria", async (req, res) => {
   try {
-    await ingresarPublicacion(id_producto, id_usuario);
-    res.status(200).send("Publicación ingresada con éxito");
+    //console.log("/productos/:categoria");
+    const { categoria } = req.params;
+    //console.log(categoria);
+    const articulos = await obtenerArticulosCategoria(categoria);
+    if (!articulos) {
+      return res
+        .status(404)
+        .json({ message: "No se encuentran Articulos en esa Categoria" });
+    }
+    //console.log(articulos);
+    res.json(articulos);
   } catch (error) {
-    res.status(500).send("No se pudo ingresar la publicación");
+    res
+      .status(error.code || 500)
+      .json({ message: error.message || "Error interno del servidor" });
   }
 });
-
-// Obtener publicaciones
+// get publicaciones
 app.get("/publicaciones", async (req, res) => {
   try {
     const publicaciones = await obtenerPublicaciones();
-    res.status(200).json(publicaciones);
-  } catch (err) {
-    res.status(500).send("Error al obtener las publicaciones");
-  }
-});
-
-// Obtener una publicación por ID
-app.get("/publicaciones/:id", async (req, res) => {
-  const id = req.params.id;
-  try {
-    const publicacion = await obtenerPublicacionPorId(id);
-    if (publicacion) {
-      res.status(200).json(publicacion);
-    } else {
-      res.status(404).json({ error: "Publicación no encontrada" });
+    //console.log(publicaciones);
+    if (!publicaciones) {
+      return res
+        .status(404)
+        .json({ message: "No se encuentran Publicaciones" });
     }
-  } catch (err) {
-    res.status(500).json({ error: "Error interno del servidor" });
-  }
-});
 
-// Ingresar articulos
-app.post("/productos", async (req, res) => {
-  const { titulo_nombre, descripcion, precio, stock, url_imagen } = req.body;
-  try {
-    await ingresarArticulo(
-      titulo_nombre,
-      descripcion,
-      precio,
-      stock,
-      url_imagen
+    const datosPublicaciones = await Promise.all(
+      publicaciones.map(async (publicacion) => {
+        //const idPublicacion = publicacion.id_publicacion;
+        const vendedor = await obtenerUsuarioId(publicacion.id_vendedor);
+        const producto = await obtenerArticuloPublicacion(
+          publicacion.id_publicacion
+        );
+        //console.log(publicacion.id_producto);
+        return {
+          ...publicacion,
+          vendedor,
+          producto,
+        };
+      })
     );
-    res.status(200).send("Articulo ingresado con éxito");
+
+    res.json(datosPublicaciones);
+
+    //res.json(publicacion, vendedor, producto);
+    /*res.json({publicaciones: [],});*/
   } catch (error) {
-    res.status(500).send("No se pudo ingresar el articulo");
+    res
+      .status(error.code || 500)
+      .json({ message: error.message || "Error interno del servidor" });
   }
 });
 
-// Obtener articulos
-app.get("/productos", async (req, res) => {
-  try {
-    const articulos = await obtenerArticulos();
-    res.status(200).json(articulos);
-  } catch (err) {
-    res.status(500).send("Error al obtener los articulos");
+// get publicaciones:id
+app.get("/publicaciones/:id", async (req, res) => {
+  const { id } = req.params;
+  const publicaciones = await obtenerPublicaciones(id);
+
+  if (!publicaciones) {
+    return res.status(404).json({ message: "No se encuentran Publicaciones" });
   }
+  //console.log("datos en get", datosUsuario);
+  res.json(publicaciones);
+  /*res.json({
+    publicaciones: [
+      {
+        idProducto: "12345678",
+        idVendedor: "1234",
+        idPublicacion: "4321",
+      },
+    ],
+  });*/
 });
 
-// Obtener un articulo por ID
-app.get("/productos/:id", async (req, res) => {
-  const id = req.params.id;
+//get favoritos
+app.get("/favoritos", async (req, res) => {
   try {
-    const articulo = await obtenerArticuloPorId(id);
-    if (articulo) {
-      res.status(200).json(articulo);
-    } else {
-      res.status(404).json({ error: "Articulo no encontrado" });
+    const autorization = req.header("Authorization");
+    if (!autorization) {
+      return res.status(401).json({ message: "No se proporcionó un token" });
     }
-  } catch (err) {
-    res.status(500).json({ error: "Error interno del servidor" });
-  }
-});
+    const token = autorization.split(" ")[1];
+    if (!token) {
+      return res.status(401).json({ message: "Token no válido" });
+    }
+    //console.log("Token Actual", autorization);
 
-// Ingresar ventas
-app.post("/ventas", async (req, res) => {
-  const { id_publicacion, id_usuario_comprador } = req.body;
-  try {
-    await ingresarVenta(id_publicacion, id_usuario_comprador);
-    res.status(200).send("Venta ingresada con éxito");
+    const verify = jwt.verify(token, "desafioLatam");
+
+    const { email } = verify;
+
+    const favoritos = await obtenerFavoritos(email);
+    if (!favoritos) {
+      return res
+        .status(404)
+        .json({ message: "No se encuentran favoritos registrados" });
+    }
+    const datosPublicaciones = await Promise.all(
+      favoritos.map(async (publicacion) => {
+        //const idPublicacion = publicacion.id_publicacion;
+
+        const vendedor = await obtenerUsuarioId(publicacion.id_usuario);
+        const producto = await obtenerArticuloPublicacion(
+          publicacion.id_publicacion
+        );
+        //console.log(vendedor, producto, "publicacion: ", publicacion);
+        return {
+          ...publicacion,
+          vendedor,
+          producto,
+        };
+      })
+    );
+
+    res.json(datosPublicaciones);
+
+    /* res.json({
+      publicaciones: [
+        {
+          idProducto: "12345678",
+          idVendedor: "1234",
+          idPublicacion: "4321",
+        },
+      ],
+    });*/
   } catch (error) {
-    res.status(500).send("No se pudo ingresar la venta");
+    res
+      .status(error.code || 500)
+      .json({ message: error.message || "Error interno del servidor" });
   }
 });
 
-// Obtener ventas
+//get Ventas
 app.get("/ventas", async (req, res) => {
   try {
-    const ventas = await obtenerVentas();
-    res.status(200).json(ventas);
-  } catch (err) {
-    res.status(500).send("Error al obtener las ventas");
-  }
-});
-
-// Obtener ventas por ID
-app.get("/ventas/:id", async (req, res) => {
-  const id = req.params.id;
-  try {
-    const venta = await obtenerVentasPorId(id);
-    if (venta) {
-      res.status(200).json(venta);
-    } else {
-      res.status(404).json({ error: "Venta no encontrada" });
+    const autorization = req.header("Authorization");
+    if (!autorization) {
+      return res.status(401).json({ message: "No se proporcionó un token" });
     }
-  } catch (err) {
-    res.status(500).json({ error: "Error interno del servidor" });
-  }
-});
+    const token = autorization.split(" ")[1];
+    if (!token) {
+      return res.status(401).json({ message: "Token no válido" });
+    }
+    //console.log("Token Actual", autorization);
 
-// Ingresa favoritos
-app.post("/favoritos", async (req, res) => {
-  const { id_usuario, id_publicacion } = req.body;
-  try {
-    await ingresarFavorito(id_usuario, id_publicacion);
-    res.status(200).send("Favorito ingresado con éxito");
+    const verify = jwt.verify(token, "desafioLatam");
+
+    const { email } = verify;
+
+    const ventas = await obtenerVentas(email);
+
+    if (!ventas) {
+      return res
+        .status(404)
+        .json({ message: "No se encuentran Compras registradas" });
+    }
+
+    const datosVentas = await Promise.all(
+      ventas.map(async (venta) => {
+        const comprador = await obtenerUsuarioId(venta.id_comprador);
+        const producto = await obtenerArticuloVentas(venta.id_publicacion);
+
+        return {
+          ...venta,
+          comprador,
+          producto,
+        };
+      })
+    );
+
+    res.json(datosVentas);
+
+    /*res.json({
+      ventas: [
+        {
+          idComprador: "1234",
+          idPublicacion: "4321",
+          precioProducto: "1000",
+        },
+      ],
+    });*/
   } catch (error) {
-    res.status(500).send("No se pudo ingresar el favorito");
+    res
+      .status(error.code || 500)
+      .json({ message: error.message || "Error interno del servidor" });
   }
 });
 
-// Obtener favoritos por ID
-app.get("/favoritos/:id", async (req, res) => {
-  const id = req.params.id;
+//post login
+app.post("/login", async (req, res) => {
   try {
-    const favorito = await obtenerFavoritosPorId(id);
-    if (favorito) {
-      res.status(200).json(favorito);
-    } else {
-      res.status(404).json({ error: "Favorito no encontrado" });
+    const { email, password } = req.body;
+    //console.log(email, password);
+
+    if (!email || !password) {
+      return res.status(400).json({ error: "Credenciales faltantes" });
     }
-  } catch (err) {
-    res.status(500).json({ error: "Error interno del servidor" });
+    const usuario = await verificarUsuario(email, password);
+
+    const token = jwt.sign({ email: usuario.email }, "desafioLatam", {
+      expiresIn: "10m",
+    });
+    const { id_usuario, nombre, email: correo, rol } = usuario;
+    //console.log("Usuario autenticado:", token);
+    res.json({ token, usuario: { id_usuario, nombre, correo, rol } });
+    /*res.json({
+      token: "blablablablabla",
+      email: "uncorreo",
+    });*/
+  } catch (error) {
+    console.log("plop", error);
+    res.status(error.code || 500).json({ error: error.message });
   }
 });
 
-module.exports = app;
+//post register
+app.post("/register", async (req, res) => {
+  try {
+    const { nombre, email, rol, password } = req.body;
+
+    if (await usuarioExiste(email)) {
+      return res.status(400).json({ message: "El usuario ya existe" });
+    }
+
+    const usuario = await registrarUsuario(nombre, email, rol, password);
+
+    const token = jwt.sign({ email: usuario.email }, "desafioLatam", {
+      expiresIn: "10m",
+    });
+    //console.log("Usuario autenticado:", token);
+    res.json({ token, usuario });
+
+    /*res.json({
+        token: "blablablablabla",
+        email: "uncorreo",
+      });*/
+  } catch (error) {
+    res.status(error.code || 500).json({ error });
+  }
+});
+
+//post articulos
+app.post("/articulos", async (req, res) => {
+  try {
+    const { nombre, descripcion, precio, stock, url } = req.body;
+
+    await registrarArticulo(nombre, descripcion, precio, stock, url);
+    res.json({
+      message: "Producto registrado con exito",
+    });
+  } catch (error) {
+    res.status(error.code || 500).json({ error });
+  }
+});
+
+//post publicacion
+app.post("/publicacion", async (req, res) => {
+  try {
+    const { idProducto } = req.body;
+
+    const autorization = req.header("Authorization");
+
+    if (!autorization) {
+      return res.status(401).json({ message: "No se proporcionó un token" });
+    }
+    const token = autorization.split(" ")[1];
+    if (!token) {
+      return res.status(401).json({ message: "Token no válido" });
+    }
+
+    const verify = jwt.verify(token, "desafioLatam");
+
+    const { email } = verify;
+    const idVendedor = await usuarioActual(email);
+    //    console.log(idVendedor);
+    await registarPublicacion(idProducto, idVendedor);
+    res.json({
+      message: "Publicacion registrada con exito",
+    });
+    /*res.json({
+      id_producto: 1234,
+      id_vendedor: 1234,
+      id_publicacion: 4321,
+    });*/
+  } catch (error) {
+    res.status(error.code || 500).json({ error: error.message });
+  }
+});
+
+//post ventas
+app.post("/ventas", async (req, res) => {
+  try {
+    const { idPublicacion } = req.body;
+
+    const autorization = req.header("Authorization");
+
+    if (!autorization) {
+      return res.status(401).json({ message: "No se proporcionó un token" });
+    }
+    const token = autorization.split(" ")[1];
+    if (!token) {
+      return res.status(401).json({ message: "Token no válido" });
+    }
+
+    const verify = jwt.verify(token, "desafioLatam");
+
+    const { email } = verify;
+    const idComprador = await usuarioActual(email);
+    const precio = await precioActual(idPublicacion);
+    // console.log(precio, idPublicacion, idComprador);
+    await registrarVenta(idPublicacion, idComprador, precio);
+    res.json({
+      message: "Venta registrado con exito",
+    });
+  } catch (error) {
+    res.status(error.code || 500).json({ error });
+  }
+});
+
+app.post("/favoritos", async (req, res) => {
+  try {
+    const { idPublicacion } = req.body;
+    const autorization = req.header("Authorization");
+    //console.log(idPublicacion);
+    if (!autorization) {
+      return res.status(401).json({ message: "No se proporcionó un token" });
+    }
+    const token = autorization.split(" ")[1];
+    if (!token) {
+      return res.status(401).json({ message: "Token no válido" });
+    }
+
+    const verify = jwt.verify(token, "desafioLatam");
+
+    const { email } = verify;
+
+    const idComprador = await usuarioActual(email);
+
+    await registrarFavorito(idComprador, idPublicacion);
+    res.json({
+      message: "Favorito Guardado",
+    });
+  } catch (error) {
+    res.status(error.code || 500).json({ error });
+  }
+});
+
+app.listen(port, console.log(`Servido Corriendo en puerto ${port}`));

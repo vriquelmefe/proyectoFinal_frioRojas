@@ -19,7 +19,7 @@ function App() {
 
   return (
     <ContextProvider value={globalState}>
-      <CartProvider> 
+      <CartProvider>
         <BrowserRouter>
           <Navigation />
           <Routes>
