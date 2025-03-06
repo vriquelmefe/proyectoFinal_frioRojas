@@ -2,26 +2,43 @@ import { Link } from "react-router-dom";
 import { Container, Row, Col, Card, Carousel, Button, Form } from "react-bootstrap";
 import Header from "../../components/Header";
 
+
 function Home() {
   const brands = [
     { src: "/argenta.png", alt: "Argenta" },
     { src: "/danfoss.png", alt: "Danfoss" },
     { src: "/logo_mcool.png", alt: "Mcool" },
     { src: "/midea.png", alt: "Midea" },
-    { src: "/weingaung.png", alt: "Weingaung" },
   ];
 
   const categories = [
-    { title: "Refrigeración", image: "https://images.unsplash.com/photo-1574169208507-84376144848b", link: "/productos/refrigeracion" },
-    { title: "Climatización", image: "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b", link: "/productos/climatizacion" },
-    { title: "Productos Completos", image: "https://images.pexels.com/photos/896102/pexels-photo-896102.jpeg", link: "/productos/productos_completos" },
+    { title: "Refrigeración", image: "/repuesto-7.jpeg", link: "/productos/refrigeracion" },
+    { title: "Climatización", image: "/climatizacion.jpg", link: "/productos/climatizacion" },
+    { title: "Productos Completos", image: "/repuesto-9.jpeg", link: "/productos/productos_completos" },
   ];
 
   return (
     <div>
       <Header />
 
-      <Container fluid className="bg-gradient py-5 text-white text-center">
+      <Container fluid className=" py-5 text-center" style={{ backgroundColor: "#1d1f3d" }}>
+        <h1 className="text-white mb-4 fw-bold display-4">Bienvenido a Nuestro Catálogo</h1>
+        <Row className="justify-content-center gap-4">
+          {categories.map((category, index) => (
+            <Col key={index} md={3} sm={6} xs={12}>
+              <Link to={category.link} className="text-decoration-none">
+                <Card className="category-card text-white border-0 rounded-4 shadow-lg">
+                  <Card.Img src={category.image} alt={category.title} className="category-img" />
+                  <Card.ImgOverlay className="d-flex align-items-center justify-content-center bg-dark bg-opacity-50">
+                    <Card.Title className="fw-bold fs-3">{category.title}</Card.Title>
+                  </Card.ImgOverlay>
+                </Card>
+              </Link>
+            </Col>
+          ))}
+        </Row>
+      </Container>
+      <Container fluid className=" py-5 text-white text-center">
         <Carousel variant="dark" className="mt-4">
           {brands.map((brand, index) => (
             <Carousel.Item key={index}>
@@ -49,25 +66,7 @@ function Home() {
           ))}
         </Carousel>
       </Container>
-
-      <Container fluid className="bg-gradient py-5 text-center" style={{ backgroundColor: "#004080" }}>
-        <h1 className="text-white mb-4 fw-bold display-4">Bienvenido a Nuestro Catálogo</h1>
-        <Row className="justify-content-center gap-4">
-          {categories.map((category, index) => (
-            <Col key={index} md={3} sm={6} xs={12}>
-              <Link to={category.link} className="text-decoration-none">
-                <Card className="category-card text-white border-0 rounded-4 shadow-lg">
-                  <Card.Img src={category.image} alt={category.title} className="category-img" />
-                  <Card.ImgOverlay className="d-flex align-items-center justify-content-center bg-dark bg-opacity-50">
-                    <Card.Title className="fw-bold fs-3">{category.title}</Card.Title>
-                  </Card.ImgOverlay>
-                </Card>
-              </Link>
-            </Col>
-          ))}
-        </Row>
-      </Container>
-      <div className="bg-dark text-white">
+      <div className="backgroundForm text-white">
         
       <Container>
         <Row>
@@ -87,12 +86,12 @@ function Home() {
                 <Form.Label>Mensaje *</Form.Label>
                 <Form.Control as="textarea" rows={3} required className="rounded-3 border-0 shadow-sm" />
               </Form.Group>
-              <Button variant="outline-light-blue" type="submit" className="rounded-3 bg-dark text-white">
+              <Button  type="submit" className="border background-button rounded-3 text-white">
                 Enviar Consultas
               </Button>
             </Form>
           </Col>
-          <Col md={6} className="text-white p-5 rounded-end shadow-lg">
+          <Col md={6} className="text-white p-5 rounded-end">
             <h3 className="fw-bold mb-4 display-5">Ubicación Casa Matriz</h3>
             <p className="mb-4">Nueva de Valdes 944</p>
             <iframe
@@ -125,12 +124,21 @@ function Home() {
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
           }
           .category-img {
-            height: 200px;
+            height: 300px;
             object-fit: cover;
             opacity: 0.8;
           }
           .category-card:hover .category-img {
             opacity: 1;
+          }
+          .backgroundForm{
+          background-color: #1d1f3d;
+          }
+           .background-button{
+          background-color: #1d1f3d;
+          }
+           .background-button:hover{
+          opacity: .8;
           }
         `}
       </style>
