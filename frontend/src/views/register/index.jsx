@@ -23,7 +23,7 @@ function Register() {
 
   const handleRegister = async (formData) => {
     try {
-      const response = await fetch(`${apiURL}/register`, {
+      const response = await fetch(`${apiURL}register`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -35,7 +35,7 @@ function Register() {
         throw new Error("Error en la solicitud");
       }
 
-      const result = await response.text();
+     // const result = await response.text();
       //console.log(result);
       navigate("/");
       alert("Usuario registrado con éxito");
