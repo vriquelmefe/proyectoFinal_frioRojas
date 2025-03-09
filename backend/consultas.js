@@ -4,9 +4,9 @@ const { Pool } = pkg;
 const pool = new Pool({
   host: "localhost",
   user: "postgres",
-  password: "password",
+  password: "Pnuevo987",
   database: "friorojas",
-  port: 5433,
+  port: 5432,
   allowExitOnIdle: true,
 });
 
@@ -40,16 +40,16 @@ const obtenerUsuarioId = async (id) => {
   }
 };
 
-const registrarUsuario = async (nombre, email, rol, password) => {
+const registrarUsuario = async (nombre, email, password) => {
   try {
     const passwordEncriptada = bcrypt.hashSync(password, 10);
     password = passwordEncriptada;
-    const consulta = `insert into usuarios (nombre,email,rol,password) values($1,$2,$3,$4 ) returning id_usuario,nombre,email,rol`;
+    const consulta = `insert into usuarios (nombre,email,rol,password) values($1,$2,$3,$4 ) returning id_usuario,nombre,email`;
 
     const { rows, rowCount } = await pool.query(consulta, [
       nombre,
       email,
-      rol,
+      "usuario",
       password,
     ]);
 
@@ -80,6 +80,7 @@ const verificarUsuario = async (email, password) => {
       error.code = 401;
       throw error;
     }
+    //console.log(rows);
     const usuario = rows[0];
 
     const { password: passwordEncriptada } = usuario;
@@ -152,16 +153,24 @@ const obtenerVentas = async (email) => {
   }
 };
 
-const registrarArticulo = async (nombre, descripcion, precio, stock, url) => {
+const registrarArticulo = async (
+  title,
+  description,
+  price,
+  stock,
+  image,
+  categoria
+) => {
   try {
     //console.log(nombre, descripcion, precio, stock, url);
-    const consulta = `insert into articulos(nombre_articulo, descripcion, precio, stock, url) values ($1, $2, $3, $4, $5)`;
+    const consulta = `insert into articulos(nombre_articulo, descripcion, precio, stock, url,categoria) values ($1, $2, $3, $4, $5, $6)`;
     const { rows, rowCount } = await pool.query(consulta, [
-      nombre,
-      descripcion,
-      precio,
+      title,
+      description,
+      price,
       stock,
-      url,
+      image,
+      categoria,
     ]);
     // console.log(rows, rowCount);
   } catch (error) {
@@ -255,9 +264,9 @@ const obtenerArticulos = async (id) => {
 
 const obtenerArticulosCategoria = async (categoria) => {
   try {
-    //console.log(categoria);
     const consulta = `select * from articulos where categoria = $1`;
     const { rows, rowCount } = await pool.query(consulta, [categoria]);
+    //console.log(rows);
     return rows;
   } catch (error) {
     console.error("Error al obtener producto:", error);
@@ -306,6 +315,18 @@ const registrarFavorito = async (idComprador, idPublicacion) => {
     throw error;
   }
 };
+const obtenerCategorias = async () => {
+  try {
+    const { rows, rowCount } = await pool.query(
+      "SELECT categoria, MIN(id_producto) AS id_producto FROM articulos GROUP BY categoria;"
+    );
+
+    return rows;
+  } catch (error) {
+    console.error("Error al obtener categorias", error);
+    throw error;
+  }
+};
 
 export {
   obtenerUsuario,
@@ -326,4 +347,5 @@ export {
   obtenerArticuloPublicacion,
   obtenerArticuloVentas,
   obtenerArticulosCategoria,
+  obtenerCategorias,
 };

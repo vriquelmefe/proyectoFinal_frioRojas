@@ -13,7 +13,6 @@ function Register() {
     defaultValues: {
       nombre: "",
       email: "",
-      rol: "",
       password: "",
     },
   });
@@ -35,7 +34,7 @@ function Register() {
       }
 
       const result = await response.text();
-      console.log(result);
+      //console.log(result);
       alert("Usuario registrado con éxito");
       navigate("/");
     } catch (error) {
@@ -116,7 +115,7 @@ function Register() {
                           className="text-danger"
                         />
                       </div>
-                      <div className="mb-3">
+                      {/*<div className="mb-3">
                         <label htmlFor="rol" className="form-label">
                           Rol
                         </label>
@@ -135,7 +134,7 @@ function Register() {
                           as="p"
                           className="text-danger"
                         />
-                      </div>
+                      </div>*/}
                       <div className="mb-3">
                         <label htmlFor="password" className="form-label">
                           Password

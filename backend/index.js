@@ -21,6 +21,7 @@ import {
   obtenerArticuloPublicacion,
   obtenerArticuloVentas,
   obtenerArticulosCategoria,
+  obtenerCategorias,
 } from "./consultas.js";
 const port = 3000;
 
@@ -289,6 +290,19 @@ app.get("/ventas", async (req, res) => {
   }
 });
 
+app.get("/addProducto", async (req, res) => {
+  try {
+    //console.log("aqui estoy");
+    const categorias = await obtenerCategorias();
+    //console.log(categorias);
+    res.json(categorias);
+  } catch (error) {
+    res
+      .status(error.code || 500)
+      .json({ message: error.message || "Error interno del servidor" });
+  }
+});
+
 //post login
 app.post("/login", async (req, res) => {
   try {
@@ -319,13 +333,13 @@ app.post("/login", async (req, res) => {
 //post register
 app.post("/register", async (req, res) => {
   try {
-    const { nombre, email, rol, password } = req.body;
+    const { nombre, email, password } = req.body;
 
     if (await usuarioExiste(email)) {
       return res.status(400).json({ message: "El usuario ya existe" });
     }
 
-    const usuario = await registrarUsuario(nombre, email, rol, password);
+    const usuario = await registrarUsuario(nombre, email, password);
 
     const token = jwt.sign({ email: usuario.email }, "desafioLatam", {
       expiresIn: "10m",
@@ -342,12 +356,13 @@ app.post("/register", async (req, res) => {
   }
 });
 
-//post articulos
-app.post("/articulos", async (req, res) => {
+//post productos
+app.post("/productos", async (req, res) => {
   try {
-    const { nombre, descripcion, precio, stock, url } = req.body;
-
-    await registrarArticulo(nombre, descripcion, precio, stock, url);
+    //console.log("aqui");
+    const { title, description, price, stock, image, categoria } = req.body;
+    //console.log(title, description, price, stock, image, categoria);
+    await registrarArticulo(title, description, price, stock, image, categoria);
     res.json({
       message: "Producto registrado con exito",
     });
