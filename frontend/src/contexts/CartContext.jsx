@@ -43,7 +43,7 @@ export const CartProvider = ({ children }) => {
 
   const eliminarDelCarrito = (id) => {
     setCarrito((prevCarrito) =>
-      prevCarrito.filter((producto) => producto.id !== id)
+      prevCarrito.filter((producto) => producto.id_producto !== id)
     );
   };
 
@@ -68,7 +68,7 @@ export const CartProvider = ({ children }) => {
   const actualizarCantidad = (id, incremento) => {
     setCarrito((prevCarrito) =>
       prevCarrito.map((producto) =>
-        producto.id === id
+        producto.id_producto === id
           ? {
               ...producto,
               cantidad: Math.max(1, producto.cantidad + incremento),

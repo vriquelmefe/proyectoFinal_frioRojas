@@ -44,6 +44,7 @@ create table ventas(
 	FOREIGN key (id_comprador) REFERENCES usuarios(id_usuario) on delete cascade
 );
 
+insert into usuarios (nombre,email,rol,password) values('Carlo Aguirre','carloaguirre@desafiolatam.com','admin','$2b$10$XEOS8WJEFj1/KLJVEDvfzeBiFdYN.awWxhCSSVdaGVnA8n3dp3lvy');
 
 insert into articulos(nombre_articulo,descripcion,precio,stock,url,categoria)values ('Compresor de Refrigeración','orem ipsum dolor sit amet consectetur adipisicing elit. Magnam quae asperiores saepe laboriosam suscipit deserunt',
 	  350000.00,20, 'https://picsum.photos/150?random=1','refrigeracion' ),   
