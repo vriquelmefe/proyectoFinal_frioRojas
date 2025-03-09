@@ -66,6 +66,14 @@ function Navigation() {
                   🔒 Logout
                 </Button>
               </Link>
+              <Link to="/addPost" className="mx-3 pt-2">
+                <Button
+                  variant="outline-info"
+                  className="text-white"
+                >
+                  ➕ Agregar artículos
+                </Button>
+              </Link>
             </>
           ) : (
             <>
