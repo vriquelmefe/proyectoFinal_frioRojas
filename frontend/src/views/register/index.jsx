@@ -3,7 +3,9 @@ import { useForm } from "react-hook-form";
 import { ErrorMessage } from "@hookform/error-message";
 import { useState } from "react";
 
-function Register() { }const apiURL = import.meta.env.VITE_API_URL
+function Register() {
+  
+  const apiURL = import.meta.env.VITE_API_URL
   const navigate = useNavigate();
   const {
     register,
