@@ -23,7 +23,7 @@ function Register() {
 
   const handleRegister = async (formData) => {
     try {
-      const response = await fetch(`${apiURL}register`, {
+      const response = await fetch("http://localhost:3000/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -32,18 +32,32 @@ function Register() {
       });
 
       if (!response.ok) {
-        throw new Error("Error en la solicitud");
+        if (response.status === 409) {
+          throw new Error("Usuario ya existe");
+        } else if (response.status === 500) {
+          throw new Error("Error del servidor");
+        } else {
+          throw new Error("Error en la solicitud");
+        }
       }
 
-     const result = await response.text();
-      //console.log(result);
+      const result = await response.text();
+      console.log(result);
       navigate("/");
       alert("Usuario registrado con éxito");
     } catch (error) {
       console.error("Error:", error);
-      setRegisterError(
-        "Error al registrar el usuario. Por favor, intenta nuevamente."
-      );
+      if (error.message === "Usuario ya existe") {
+        setRegisterError(
+          "Ya existe un usuario con ese email. Por favor, intenta con otro."
+        );
+      } else if (error.message === "Error del servidor") {
+        setRegisterError("Error del servidor. Por favor, intenta más tarde.");
+      } else {
+        setRegisterError(
+          "En este momento no es posible registrar el usuario. Por favor, intenta más tarde."
+        );
+      }
     }
   };
 
