@@ -23,6 +23,7 @@ import {
   obtenerArticulosCategoria,
   obtenerCategorias,
   registrarDetalleVenta,
+  loginUsuario,
 } from "./consultas.js";
 const port = 3000;
 
@@ -304,30 +305,16 @@ app.get("/addProducto", async (req, res) => {
   }
 });
 
-//post login
 app.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
-    //console.log(email, password);
-
-    if (!email || !password) {
-      return res.status(400).json({ error: "Credenciales faltantes" });
-    }
-    const usuario = await verificarUsuario(email, password);
-    //console.log(usuario);
-    const token = jwt.sign({ email: usuario.email }, "desafioLatam", {
-      expiresIn: "10m",
-    });
-    const { id_usuario, nombre, email: correo, rol } = usuario;
-    //console.log("Usuario autenticado:", token);
-    res.json({ token, usuario: { id_usuario, nombre, correo, rol } });
-    /*res.json({
-      token: "blablablablabla",
-      email: "uncorreo",
-    });*/
+    await loginUsuario(email, password);
+    const token = jwt.sign({ email }, "az_AZ", { expiresIn: "1h" });
+    res.send({ token });
   } catch (error) {
-    console.log("plop", error);
-    res.status(error.code || 500).json({ error: error.message });
+    res
+      .status(error.code || 500)
+      .send(error.message || "Error interno del servidor");
   }
 });
 
@@ -337,7 +324,7 @@ app.post("/register", async (req, res) => {
     const { nombre, email, password } = req.body;
 
     if (await usuarioExiste(email)) {
-      return res.status(400).json({ message: "El usuario ya existe" });
+      return res.status(409).json({ message: "El usuario ya existe" });
     }
 
     const usuario = await registrarUsuario(nombre, email, password);
@@ -347,11 +334,6 @@ app.post("/register", async (req, res) => {
     });
     //console.log("Usuario autenticado:", token);
     res.json({ token, usuario });
-
-    /*res.json({
-        token: "blablablablabla",
-        email: "uncorreo",
-      });*/
   } catch (error) {
     res.status(error.code || 500).json({ error });
   }

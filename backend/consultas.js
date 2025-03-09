@@ -1,12 +1,13 @@
 import bcrypt from "bcryptjs";
 import pkg from "pg";
 const { Pool } = pkg;
+
 const pool = new Pool({
   host: process.env.DB_HOST,
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
-  port: 5433,
+  port: 5432,
   allowExitOnIdle: true,
 });
 
@@ -73,26 +74,20 @@ const usuarioExiste = async (email) => {
 const verificarUsuario = async (email, password) => {
   try {
     const consulta = `select * from usuarios where email = $1`;
-
     const { rows, rowCount } = await pool.query(consulta, [email]);
     if (rowCount === 0) {
       const error = new Error("Usuario no Existe");
-      error.code = 401;
+      error.code = 404;
       throw error;
     }
-    //console.log(rows);
     const usuario = rows[0];
-
     const { password: passwordEncriptada } = usuario;
-
     const passwordEsCorrecta = bcrypt.compareSync(password, passwordEncriptada);
-
     if (!passwordEsCorrecta) {
       const error = new Error("Contraseña incorrecta");
       error.code = 401;
       throw error;
     }
-
     return usuario;
   } catch (error) {
     console.error("Error verificando usuario:", error);
@@ -103,6 +98,30 @@ const verificarUsuario = async (email, password) => {
     }
   }
 };
+
+const loginUsuario = async (email, password) => {
+  const values = [email];
+  const consulta = "SELECT * FROM usuarios WHERE email = $1";
+  try {
+    const {
+      rows: [usuario],
+    } = await pool.query(consulta, values);
+    if (!usuario) {
+      throw { code: 404, message: "Usuario no encontrado" };
+    }
+    const { password: passwordEncriptada } = usuario;
+    const passwordEsCorrecta = bcrypt.compareSync(password, passwordEncriptada);
+    if (!passwordEsCorrecta) {
+      throw { code: 401, message: "Email o contraseña incorrecta" };
+    }
+  } catch (error) {
+    if (error.code === "ECONNREFUSED") {
+      throw { code: 500, message: "Error de conexión a la base de datos" };
+    }
+    throw error;
+  }
+};
+
 const obtenerPublicaciones = async (id) => {
   try {
     let consulta, valores;
@@ -377,4 +396,5 @@ export {
   obtenerArticulosCategoria,
   obtenerCategorias,
   registrarDetalleVenta,
+  loginUsuario,
 };
