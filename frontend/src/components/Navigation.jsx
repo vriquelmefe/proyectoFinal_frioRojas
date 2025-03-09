@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import Button from "react-bootstrap/Button";
 import Container from "react-bootstrap/Container";
@@ -8,7 +8,7 @@ import { useCart } from "../contexts/CartContext.jsx";
 
 function Navigation() {
   const { obtenerTotalPrecio } = useCart();
-  const [isLoggedIn, setIsLoggedIn] = React.useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const checkAuthToken = () => {
     const token = localStorage.getItem("token");
@@ -27,7 +27,7 @@ function Navigation() {
     localStorage.removeItem("token");
     setIsLoggedIn(false);
   };
-
+  //console.log(localStorage.getItem("token"));
   return (
     <Navbar data-bs-theme="dark" className="navegacion navigationBar">
       <Container>

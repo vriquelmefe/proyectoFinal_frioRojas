@@ -76,7 +76,7 @@ const AddProducto = () => {
 
       const result = await response.json();
       //console.log("Response:", result);
-      localStorage.setItem("token", result.token);
+      //localStorage.setItem("token", result.token);
       alert("Producto agregado con exito!");
       // navigate("/");
     } catch (error) {

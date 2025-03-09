@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { Container, Card, Button, Row, Col, Alert } from "react-bootstrap";
 //import productosData from '../data/data';
 import { useCart } from "../contexts/CartContext.jsx";
@@ -14,7 +14,12 @@ const ProductDetail = () => {
   const { carrito, agregarAlCarrito } = useCart();
   const [cantidad, setCantidad] = useState(1);
   const [mensaje, setMensaje] = useState("");
+  const navigate = useNavigate();
+  const volver = (e) => {
+    e.preventDefault();
 
+    navigate("/");
+  };
   useEffect(() => {
     const cargarProducto = async () => {
       try {
@@ -58,8 +63,8 @@ const ProductDetail = () => {
   }
   //console.log(producto);
   return (
-    <Container className="my-5">
-      <Row>
+    <Container className="my-5 d-flex justify-content-center align-items-center">
+      <Row className="d-flex justify-content-center">
         <Col sm={8}>
           <Card className="text-center">
             <Card.Img
@@ -73,7 +78,7 @@ const ProductDetail = () => {
               <Card.Text>{producto.descripcion}</Card.Text>
               <Card.Text className="fw-bold">{producto.precio}</Card.Text>
 
-              <div className="d-flex align-items-center">
+              <div className="d-flex align-items-center justify-content-center">
                 <Button
                   variant="primary"
                   onClick={handleAgregarCarrito}
@@ -91,6 +96,16 @@ const ProductDetail = () => {
             </Alert>
           )}
         </Col>
+        <div className="d-flex align-items-center justify-content-center mt-4">
+          <Button
+            variant="primary"
+            type="button"
+            onClick={volver}
+            className="ms-3"
+          >
+            Volver
+          </Button>
+        </div>
       </Row>
     </Container>
   );
