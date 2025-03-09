@@ -72,7 +72,6 @@ function Home() {
         <Row>
           <Col md={6} className=" p-5 rounded-start">
             <h2 className="fw-bold mb-4 display-5">CONTÁCTANOS</h2>
-            <h3 className="mb-4">Contacto desde Sitio Web Friorgias.cl</h3>
             <Form>
               <Form.Group className="mb-3">
                 <Form.Label>Nombre completo / Empresa *</Form.Label>

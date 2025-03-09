@@ -4,6 +4,8 @@ import { ErrorMessage } from "@hookform/error-message";
 import { useState } from "react";
 
 function Register() {
+  
+  const apiURL = import.meta.env.VITE_API_URL
   const navigate = useNavigate();
   const {
     register,
@@ -21,7 +23,7 @@ function Register() {
 
   const handleRegister = async (formData) => {
     try {
-      const response = await fetch("http://localhost:3000/register", {
+      const response = await fetch(`${apiURL}/register`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
