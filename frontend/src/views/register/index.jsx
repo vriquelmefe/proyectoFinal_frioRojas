@@ -35,7 +35,7 @@ function Register() {
         throw new Error("Error en la solicitud");
       }
 
-     // const result = await response.text();
+     const result = await response.text();
       //console.log(result);
       navigate("/");
       alert("Usuario registrado con éxito");
