@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import Carousel from 'react-bootstrap/Carousel';
 import Image from 'react-bootstrap/Image';
-import carusel1 from '../../public/climatizacion.jpg';
-import carusel2 from '../../public/sopletes-SELLO-2-600x450.jpg';
-import carusel3 from '../../public/refrigerantes-sello-2-600x450.jpg';
+
+const carusel1 = './climatizacion.jpg';
+const carusel2 = './sopletes-SELLO-2-600x450.jpg';
+const carusel3 = './refrigerantes-sello-2-600x450.jpg';
 
 function Header() {
   const [index, setIndex] = useState(0);
@@ -17,7 +18,7 @@ function Header() {
       <Carousel activeIndex={index} onSelect={handleSelect} className="backgroundCarousel items-center h-50 object-contain justify-center">
         <Carousel.Item className="justify-content-center align-items-center">
           <Image 
-            src={carusel1} 
+            src={carusel1}
             className="d-block mx-auto" 
             alt="Evaporador de Aire" 
           />
@@ -29,7 +30,7 @@ function Header() {
 
         <Carousel.Item className="justify-content-center align-items-center">
           <Image 
-            src={carusel2} 
+            src={carusel2}
             className="d-block mx-auto" 
             alt="Termostato Digital" 
           />
@@ -41,7 +42,7 @@ function Header() {
 
         <Carousel.Item className="justify-content-center align-items-center">
           <Image 
-            src={carusel3} 
+            src={carusel3}
             className="d-block mx-auto" 
             alt="Ventilador de Enfriamiento" 
           />

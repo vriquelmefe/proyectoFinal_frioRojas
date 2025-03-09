@@ -5,7 +5,7 @@ import { useNavigate, Link } from "react-router-dom";
 
 function Login() {
   const navigate = useNavigate();
-const apiURL = import.meta.env.VITE_API_URL
+  const apiURL = import.meta.env.VITE_API_URL;
   const initialValues = {
     email: "",
     password: "",
@@ -30,9 +30,16 @@ const apiURL = import.meta.env.VITE_API_URL
       });
 
       if (!response.ok) {
-        throw new Error("Error en la solicitud");
+        if (response.status === 500) {
+          throw new Error("Error del servidor");
+        } else if (response.status === 401) {
+          throw new Error("Contraseña incorrecta");
+        } else if (response.status === 404) {
+          throw new Error("Email no existe");
+        } else {
+          throw new Error("Error en la solicitud");
+        }
       }
-
       const result = await response.json();
       console.log("Token:", result.token);
       localStorage.setItem("token", result.token);
@@ -40,79 +47,94 @@ const apiURL = import.meta.env.VITE_API_URL
       navigate("/");
     } catch (error) {
       console.error("Error:", error);
-      setLoginError(
-        "Error al iniciar sesión. Por favor, verifica tus credenciales."
-      );
+      if (error.message === "Email no existe") {
+        setLoginError(
+          "El email no está registrado. Por favor, verifica tus credenciales."
+        );
+      } else if (error.message === "Contraseña incorrecta") {
+        setLoginError(
+          "Contraseña incorrecta. Por favor, verifica tus credenciales."
+        );
+      } else {
+        setLoginError("Error del servidor. Por favor, intenta más tarde.");
+      }
     }
   };
 
   return (
     <>
-    <div className="container mt-5">
-      <div className="row justify-content-center">
-        <div className="col-md-8">
-          <Card className="shadow-lg">
-            <div className="row g-0">
-              <div className="col-md-8">
-                <Card.Body className="p-4">
-                  <Form onSubmit={handleSubmit(handleLogin)}>
-                    <Form.Group className="mb-3" controlId="formBasicEmail">
-                      <Form.Label>Email</Form.Label>
-                      <Form.Control
-                        type="email"
-                        placeholder="Enter email"
-                        {...register("email", {
-                          required: "Email is required",
-                        })}
-                      />
-                      {errors.email && (
-                        <p className="text-danger">{errors.email.message}</p>
-                      )}
-                    </Form.Group>
+      <div className="container mt-5">
+        <div className="row justify-content-center">
+          <div className="col-md-8">
+            <Card className="shadow-lg">
+              <div className="row g-0">
+                <div className="col-md-8">
+                  <Card.Body className="p-4">
+                    <Form onSubmit={handleSubmit(handleLogin)}>
+                      <Form.Group className="mb-3" controlId="formBasicEmail">
+                        <Form.Label>Email</Form.Label>
+                        <Form.Control
+                          type="email"
+                          placeholder="Enter email"
+                          {...register("email", {
+                            required: "Email is required",
+                          })}
+                        />
+                        {errors.email && (
+                          <p className="text-danger">{errors.email.message}</p>
+                        )}
+                      </Form.Group>
 
-                    <Form.Group className="mb-3" controlId="formBasicPassword">
-                      <Form.Label>Password</Form.Label>
-                      <Form.Control
-                        type="password"
-                        placeholder="Password"
-                        {...register("password", {
-                          required: "Password is required",
-                        })}
-                      />
-                      {errors.password && (
-                        <p className="text-danger">{errors.password.message}</p>
-                      )}
-                    </Form.Group>
-
-                    {loginError && <p className="text-danger">{loginError}</p>}
-
-                    <div className="d-grid">
-                      <Button
-                        type="submit"
-                        style={{
-                          backgroundColor: "#1D1F3D",
-                          borderColor: "#1D1F3D",
-                        }}
+                      <Form.Group
+                        className="mb-3"
+                        controlId="formBasicPassword"
                       >
-                        Iniciar sesión
-                      </Button>
-                    </div>
-                  </Form>
-                </Card.Body>
+                        <Form.Label>Password</Form.Label>
+                        <Form.Control
+                          type="password"
+                          placeholder="Password"
+                          {...register("password", {
+                            required: "Password is required",
+                          })}
+                        />
+                        {errors.password && (
+                          <p className="text-danger">
+                            {errors.password.message}
+                          </p>
+                        )}
+                      </Form.Group>
+
+                      {loginError && (
+                        <p className="text-danger">{loginError}</p>
+                      )}
+
+                      <div className="d-grid">
+                        <Button
+                          type="submit"
+                          style={{
+                            backgroundColor: "#1D1F3D",
+                            borderColor: "#1D1F3D",
+                          }}
+                        >
+                          Iniciar sesión
+                        </Button>
+                      </div>
+                    </Form>
+                  </Card.Body>
+                </div>
+                <div className="col-md-4">
+                  <img
+                    src="./public/logo.png"
+                    className="img-fluid rounded-end"
+                    alt="Imagen de login"
+                  />
+                </div>
               </div>
-              <div className="col-md-4">
-                <img
-                  src="./public/logo.png"
-                  className="img-fluid rounded-end"
-                  alt="Imagen de login"
-                />
-              </div>
-            </div>
-          </Card>
+            </Card>
+          </div>
         </div>
       </div>
-    </div>
-    <nav className="mt-4 text-center">
+      <nav className="mt-4 text-center">
         <Link to="/register" className="text-decoration-none">
           ¿No tienes una cuenta? Regístrate
         </Link>
