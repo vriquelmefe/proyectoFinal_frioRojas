@@ -34,7 +34,7 @@ function Login() {
       }
 
       const result = await response.json();
-      //console.log("Token:", result.token);
+      console.log("Token:", result.token);
       localStorage.setItem("token", result.token);
       alert("Inicio de sesión exitoso");
       navigate("/");
@@ -48,78 +48,71 @@ function Login() {
 
   return (
     <>
-      <div className="container mt-5">
-        <div className="row justify-content-center">
-          <div className="col-md-8">
-            <Card className="shadow-lg">
-              <div className="row g-0">
-                <div className="col-md-8">
-                  <Card.Body className="p-4">
-                    <Form onSubmit={handleSubmit(handleLogin)}>
-                      <Form.Group className="mb-3" controlId="formBasicEmail">
-                        <Form.Label>Email</Form.Label>
-                        <Form.Control
-                          type="email"
-                          placeholder="Enter email"
-                          {...register("email", {
-                            required: "Email is required",
-                          })}
-                        />
-                        {errors.email && (
-                          <p className="text-danger">{errors.email.message}</p>
-                        )}
-                      </Form.Group>
-
-                      <Form.Group
-                        className="mb-3"
-                        controlId="formBasicPassword"
-                      >
-                        <Form.Label>Password</Form.Label>
-                        <Form.Control
-                          type="password"
-                          placeholder="Password"
-                          {...register("password", {
-                            required: "Password is required",
-                          })}
-                        />
-                        {errors.password && (
-                          <p className="text-danger">
-                            {errors.password.message}
-                          </p>
-                        )}
-                      </Form.Group>
-
-                      {loginError && (
-                        <p className="text-danger">{loginError}</p>
+    <div className="container mt-5">
+      <div className="row justify-content-center">
+        <div className="col-md-8">
+          <Card className="shadow-lg">
+            <div className="row g-0">
+              <div className="col-md-8">
+                <Card.Body className="p-4">
+                  <Form onSubmit={handleSubmit(handleLogin)}>
+                    <Form.Group className="mb-3" controlId="formBasicEmail">
+                      <Form.Label>Email</Form.Label>
+                      <Form.Control
+                        type="email"
+                        placeholder="Enter email"
+                        {...register("email", {
+                          required: "Email is required",
+                        })}
+                      />
+                      {errors.email && (
+                        <p className="text-danger">{errors.email.message}</p>
                       )}
+                    </Form.Group>
 
-                      <div className="d-grid">
-                        <Button
-                          type="submit"
-                          style={{
-                            backgroundColor: "#1D1F3D",
-                            borderColor: "#1D1F3D",
-                          }}
-                        >
-                          Iniciar sesión
-                        </Button>
-                      </div>
-                    </Form>
-                  </Card.Body>
-                </div>
-                <div className="col-md-4">
-                  <img
-                    src="./public/logo.png"
-                    className="img-fluid rounded-end"
-                    alt="Imagen de login"
-                  />
-                </div>
+                    <Form.Group className="mb-3" controlId="formBasicPassword">
+                      <Form.Label>Password</Form.Label>
+                      <Form.Control
+                        type="password"
+                        placeholder="Password"
+                        {...register("password", {
+                          required: "Password is required",
+                        })}
+                      />
+                      {errors.password && (
+                        <p className="text-danger">{errors.password.message}</p>
+                      )}
+                    </Form.Group>
+
+                    {loginError && <p className="text-danger">{loginError}</p>}
+
+                    <div className="d-grid">
+                      <Button
+                        type="submit"
+                        style={{
+                          backgroundColor: "#1D1F3D",
+                          borderColor: "#1D1F3D",
+                        }}
+                      >
+                        Iniciar sesión
+                      </Button>
+                    </div>
+                  </Form>
+                </Card.Body>
               </div>
-            </Card>
-          </div>
+              <div className="col-md-4">
+                <img
+                  src="./public/logo.png"
+                  className="img-fluid rounded-end"
+                  alt="Imagen de login"
+                />
+              </div>
+            </div>
+          </Card>
         </div>
       </div>
-      <nav className="mt-4 text-center">
+    </div>
+    <nav className="mt-4 text-center">
         <Link to="/register" className="text-decoration-none">
           ¿No tienes una cuenta? Regístrate
         </Link>
