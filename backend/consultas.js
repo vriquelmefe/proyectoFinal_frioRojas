@@ -127,11 +127,12 @@ const obtenerPublicaciones = async (id) => {
 
 const obtenerFavoritos = async (email) => {
   try {
-    const consulta = `select * from favoritos where id_usuario =(select id_usuario from usuarios where email = $1)`;
+    const consulta = `SELECT p.* FROM articulos p JOIN favoritos f ON f.id_producto = p.id_producto JOIN usuarios u ON f.id_usuario = u.id_usuario WHERE u.email = $1`;
     const { rows, rowCount } = await pool.query(consulta, [email]);
 
     if (!rowCount) {
-      throw { message: "error al cargar informacion", code: 404 };
+      console.log("No se encuentran favoritos registrados");
+      throw { message: "No se encuentran favoritos registrados", code: 404 };
     }
     return rows;
   } catch (error) {
@@ -330,19 +331,35 @@ const obtenerArticuloVentas = async (id) => {
   }
 };
 
-const registrarFavorito = async (idComprador, idPublicacion) => {
+const registrarFavorito = async (idComprador, idProducto) => {
   try {
     const consulta =
-      "insert into favoritos(id_usuario, id_publicacion)values($1, $2)";
+      "insert into favoritos(id_usuario, id_producto)values($1, $2)";
     const { rows, rowCount } = await pool.query(consulta, [
       idComprador,
-      idPublicacion,
+      idProducto,
     ]);
   } catch (error) {
     console.error("Error al Registrar Favoritos:", error);
     throw error;
   }
 };
+
+const eliminarFavorito = async (idComprador, idProducto) => {
+  try {
+    const consulta =
+      "delete from favoritos where id_usuario=$1 and id_producto = $2";
+
+    const { rows, rowCount } = await pool.query(consulta, [
+      idComprador,
+      idProducto,
+    ]);
+  } catch (error) {
+    console.error("Error al Registrar Favoritos:", error);
+    throw error;
+  }
+};
+
 const obtenerCategorias = async () => {
   try {
     const { rows, rowCount } = await pool.query(
@@ -377,4 +394,5 @@ export {
   obtenerArticulosCategoria,
   obtenerCategorias,
   registrarDetalleVenta,
+  eliminarFavorito,
 };

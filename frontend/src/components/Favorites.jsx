@@ -1,15 +1,51 @@
 import { Container, Row, Col, Card, Button } from "react-bootstrap";
 import { useCart } from "../contexts/CartContext";
-import productosData from "../data/data";
+//import productosData from "../data/data";
 import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 
 const Favorites = () => {
   const { favoritos, toggleFavorito } = useCart();
+  const [productosFavoritos, setProductosFavoritos] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchFavoritos = async () => {
+      try {
+        setLoading(true);
+
+        const response = await fetch(`http://localhost:3000/favoritos`, {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error("Error al cargar los favoritos");
+        }
+
+        const productos = await response.json();
+        setProductosFavoritos(productos);
+        console.log(productos);
+      } catch (error) {
+        console.error("Error al cargar favoritos:", error);
+        setError("No se pudieron cargar los productos favoritos.");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchFavoritos();
+  }, []);
+
+  if (loading) return <p className="text-center">Cargando favoritos...</p>;
+  if (error) return <p className="text-center">{error}</p>;
 
   console.log("Favoritos almacenados:", favoritos);
 
-  const productosFavoritos = Object.keys(favoritos)
+  /*const productosFavoritos = Object.keys(favoritos)
     .filter((id) => favoritos[id])
     .map((id) => {
       for (let categoria in productosData) {
@@ -20,7 +56,7 @@ const Favorites = () => {
       }
       return null;
     })
-    .filter(Boolean);
+    .filter(Boolean);*/
 
   return (
     <Container className="my-8">
@@ -47,6 +83,7 @@ const Favorites = () => {
                     </Button>
                   </div>
                   <Card.Text>{producto.precio}</Card.Text>
+                  <Card.Text>{producto.descripcion}</Card.Text>
                   <Button
                     variant="primary"
                     onClick={() =>

@@ -49,7 +49,7 @@ const Productos = () => {
 
         setProductos(datos || []);
         setTotalProductos(datos.length || 0);
-        console.log(productos);
+        //console.log(productos);
       } catch (err) {
         console.error("Error al cargar productos:", err);
         setError("No se pudieron cargar los productos");

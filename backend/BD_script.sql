@@ -29,10 +29,10 @@ create table articulos(
 
 create table favoritos(
 	id_usuario int not null,
-	id_publicacion int not null,
+	id_producto int not null,
 	FOREIGN key (id_usuario) references usuarios(id_usuario) on delete cascade,
-	FOREIGN key (id_publicacion)references publicacion(id_publicacion) on delete cascade,
-	PRIMARY KEY (id_usuario, id_publicacion)
+	FOREIGN key (id_producto)references articulos(id_producto) on delete cascade,
+	PRIMARY KEY (id_usuario, id_producto)
 );
 
 create table ventas(

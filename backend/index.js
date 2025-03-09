@@ -23,6 +23,7 @@ import {
   obtenerArticulosCategoria,
   obtenerCategorias,
   registrarDetalleVenta,
+  eliminarFavorito,
 } from "./consultas.js";
 const port = 3000;
 
@@ -193,6 +194,7 @@ app.get("/favoritos", async (req, res) => {
     const verify = jwt.verify(token, "desafioLatam");
 
     const { email } = verify;
+    //console.log(email);
 
     const favoritos = await obtenerFavoritos(email);
     if (!favoritos) {
@@ -200,7 +202,7 @@ app.get("/favoritos", async (req, res) => {
         .status(404)
         .json({ message: "No se encuentran favoritos registrados" });
     }
-    const datosPublicaciones = await Promise.all(
+    /*const datosPublicaciones = await Promise.all(
       favoritos.map(async (publicacion) => {
         //const idPublicacion = publicacion.id_publicacion;
 
@@ -215,9 +217,9 @@ app.get("/favoritos", async (req, res) => {
           producto,
         };
       })
-    );
+    );*/
 
-    res.json(datosPublicaciones);
+    res.json(favoritos);
 
     /* res.json({
       publicaciones: [
@@ -470,7 +472,8 @@ app.post("/ventas", async (req, res) => {
 
 app.post("/favoritos", async (req, res) => {
   try {
-    const { idPublicacion } = req.body;
+    const { idProducto, estado } = req.body;
+
     const autorization = req.header("Authorization");
     //console.log(idPublicacion);
     if (!autorization) {
@@ -484,13 +487,19 @@ app.post("/favoritos", async (req, res) => {
     const verify = jwt.verify(token, "desafioLatam");
 
     const { email } = verify;
-
+    //console.log(estado);
     const idComprador = await usuarioActual(email);
-
-    await registrarFavorito(idComprador, idPublicacion);
-    res.json({
-      message: "Favorito Guardado",
-    });
+    if (!estado) {
+      await eliminarFavorito(idComprador, idProducto);
+      res.json({
+        message: "Favorito eliminado",
+      });
+    } else {
+      await registrarFavorito(idComprador, idProducto);
+      res.json({
+        message: "Favorito Guardado",
+      });
+    }
   } catch (error) {
     res.status(error.code || 500).json({ error });
   }

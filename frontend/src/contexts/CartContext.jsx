@@ -78,12 +78,45 @@ export const CartProvider = ({ children }) => {
     );
   };
 
-  const toggleFavorito = (id) => {
+  /*const toggleFavorito = (id) => {
     setFavoritos((prevFavoritos) => {
       const nuevoEstado = { ...prevFavoritos, [id]: !prevFavoritos[id] };
       //console.log("Favoritos actualizados:", nuevoEstado);
       return nuevoEstado;
     });
+  };*/
+
+  const toggleFavorito = async (idProducto) => {
+    const updatedFavoritos = { ...favoritos };
+
+    if (updatedFavoritos[idProducto]) {
+      delete updatedFavoritos[idProducto];
+    } else {
+      updatedFavoritos[idProducto] = true;
+    }
+
+    setFavoritos(updatedFavoritos);
+    try {
+      const respuesta = await fetch("http://localhost:3000/favoritos", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        body: JSON.stringify({
+          idProducto,
+          estado: updatedFavoritos[idProducto],
+        }),
+      });
+
+      if (!respuesta.ok) {
+        throw new Error("Error al actualizar los favoritos");
+      }
+
+      console.log("Favorito actualizado en la base de datos");
+    } catch (error) {
+      console.error("Error al enviar los favoritos a la base de datos:", error);
+    }
   };
 
   return (
