@@ -19,13 +19,13 @@ create table articulos(
 
 	);	
 	
-create table publicacion(
+/*create table publicacion(
 	id_publicacion serial primary key,
 	id_producto int not null,
 	id_vendedor int not null,
 	FOREIGN key (id_producto) references articulos(id_producto) on delete cascade,
 	FOREIGN key (id_vendedor) references usuarios(id_usuario) on delete cascade
-);
+);*/
 
 create table favoritos(
 	id_usuario int not null,
@@ -36,13 +36,18 @@ create table favoritos(
 );
 
 create table ventas(
-	id_venta serial primary key,
-	id_publicacion int not null,
-	id_comprador int not null,
-	precio_producto decimal(10,2) not null check (precio_producto>=0),
-	FOREIGN KEY (id_publicacion) REFERENCES publicacion(id_publicacion),
-	FOREIGN key (id_comprador) REFERENCES usuarios(id_usuario) on delete cascade
-);
+  id_venta serial primary key,
+  id_comprador int not null,
+  fecha_venta timestamp default current_timestamp,total_compra decimal(10,2) not null check (total_compra >= 0),FOREIGN key (id_comprador) REFERENCES usuarios(id_usuario) on delete cascade);
+
+create table detalle_venta(
+  id_detalle_venta serial primary key,
+  id_venta int not null,
+  id_producto int not null,
+  precio_producto decimal(10,2) not null check (precio_producto>=0),
+  cantidad int not null check(cantidad>=0),
+  FOREIGN KEY (id_producto) REFERENCES articulos(id_producto),
+  FOREIGN KEY (id_venta) REFERENCES ventas(id_venta) ON DELETE CASCADE);
 
 insert into usuarios (nombre,email,rol,password) values('Carlo Aguirre','carloaguirre@desafiolatam.com','admin','$2b$10$XEOS8WJEFj1/KLJVEDvfzeBiFdYN.awWxhCSSVdaGVnA8n3dp3lvy');
 

@@ -49,7 +49,7 @@ const Productos = () => {
 
         setProductos(datos || []);
         setTotalProductos(datos.length || 0);
-        //console.log(datos);
+        console.log(productos);
       } catch (err) {
         console.error("Error al cargar productos:", err);
         setError("No se pudieron cargar los productos");
@@ -61,6 +61,8 @@ const Productos = () => {
 
     cargarProductos();
   }, [categoria, paginaActual, productosPorPagina]);
+
+  // console.log("Total: ",totalProductos,"Producto Pagina: ",productosPorPagina );
 
   const totalPaginas = Math.ceil(totalProductos / productosPorPagina);
   /*const productosPaginados = productos.slice(

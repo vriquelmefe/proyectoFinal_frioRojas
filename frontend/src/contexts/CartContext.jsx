@@ -59,10 +59,10 @@ export const CartProvider = ({ children }) => {
       const cantidad = producto.cantidad || 1;
       return total + precioNumerico * cantidad;
     }, 0);
-    return total.toLocaleString("es-CL", {
+    return total; /*.toLocaleString("es-CL", {
       style: "currency",
       currency: "CLP",
-    });
+    });*/
   };
 
   const actualizarCantidad = (id, incremento) => {

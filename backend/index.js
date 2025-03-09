@@ -22,6 +22,7 @@ import {
   obtenerArticuloVentas,
   obtenerArticulosCategoria,
   obtenerCategorias,
+  registrarDetalleVenta,
 } from "./consultas.js";
 const port = 3000;
 
@@ -313,7 +314,7 @@ app.post("/login", async (req, res) => {
       return res.status(400).json({ error: "Credenciales faltantes" });
     }
     const usuario = await verificarUsuario(email, password);
-
+    //console.log(usuario);
     const token = jwt.sign({ email: usuario.email }, "desafioLatam", {
       expiresIn: "10m",
     });
@@ -408,25 +409,57 @@ app.post("/publicacion", async (req, res) => {
 //post ventas
 app.post("/ventas", async (req, res) => {
   try {
-    const { idPublicacion } = req.body;
+    const { productos, total } = req.body;
 
     const autorization = req.header("Authorization");
-
     if (!autorization) {
       return res.status(401).json({ message: "No se proporcionó un token" });
     }
+
     const token = autorization.split(" ")[1];
+    //console.log(token);
+
     if (!token) {
       return res.status(401).json({ message: "Token no válido" });
     }
-
     const verify = jwt.verify(token, "desafioLatam");
 
     const { email } = verify;
     const idComprador = await usuarioActual(email);
-    const precio = await precioActual(idPublicacion);
-    // console.log(precio, idPublicacion, idComprador);
-    await registrarVenta(idPublicacion, idComprador, precio);
+
+    if (!productos || !Array.isArray(productos)) {
+      return res.status(400).json({ message: "Datos inválidos." });
+    }
+    const id_venta = await registrarVenta(idComprador, total);
+    //console.log("id_venta", id_venta);
+
+    for (const producto of productos) {
+      producto.precio = parseFloat(producto.precio);
+      producto.cantidad = parseInt(producto.cantidad, 10);
+
+      //console.log(`Producto: ${producto.id_producto}, Cantidad: ${producto.cantidad}, Precio: ${producto.precio}, usuario:${idComprador}`);
+
+      await registrarDetalleVenta(
+        id_venta,
+        producto.id_producto,
+        producto.cantidad,
+        producto.precio
+      );
+    }
+
+    /*productos.forEach((producto) => {
+      
+      producto.precio = parseFloat(producto.precio);
+      producto.cantidad = parseInt(producto.cantidad, 10); 
+
+      await registrarVenta(id_producto, idComprador, cantidad, precio);
+      
+      console.log(
+        `Producto: ${producto.nombre_articulo}, Cantidad: ${producto.cantidad}, Precio: ${producto.precio}`
+      );
+    });*/
+    //const precio = await precioActual(idPublicacion);
+    //console.log("En index", id_producto, idComprador, cantidad, precio);
     res.json({
       message: "Venta registrado con exito",
     });

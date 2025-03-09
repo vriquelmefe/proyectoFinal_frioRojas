@@ -1,5 +1,6 @@
 import { useCart } from "../contexts/CartContext.jsx";
 import { Container, Row, Col, Button } from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
 
 const Cart = () => {
   const {
@@ -8,6 +9,7 @@ const Cart = () => {
     actualizarCantidad,
     obtenerTotalPrecio,
   } = useCart();
+  const navigate = useNavigate();
 
   if (carrito.length === 0) {
     return <Container className="my-5">El carrito está vacío.</Container>;
@@ -23,6 +25,49 @@ const Cart = () => {
 
   const handleDecrementar = (id) => {
     actualizarCantidad(id, -1);
+  };
+
+  const realizarCompra = async () => {
+    const productosCarrito = carrito.map((producto) => ({
+      id_producto: producto.id_producto,
+      nombre_articulo: producto.nombre_articulo,
+      cantidad: producto.cantidad,
+      precio: parseFloat(producto.precio),
+    }));
+
+    try {
+      //console.log(productosCarrito);
+      const response = await fetch("http://localhost:3000/ventas", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `beaver ${localStorage.getItem("token")}`,
+        },
+        body: JSON.stringify({
+          productos: productosCarrito,
+          total: obtenerTotalPrecio(),
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(
+          `Error en la compra: ${errorData.message || response.statusText}`
+        );
+      }
+
+      const result = await response.json();
+      console.log(result);
+
+      alert("Compra realizada con éxito!");
+
+      navigate("/");
+    } catch (error) {
+      console.error("Error al realizar la compra:", error);
+      alert(
+        "Hubo un error al realizar la compra, por favor intente nuevamente."
+      );
+    }
   };
 
   return (
@@ -72,6 +117,15 @@ const Cart = () => {
       <div className="text-center mt-4">
         <h4>Total: {obtenerTotalPrecio()}</h4>
       </div>
+      <Container className="d-flex justify-content-center mt-5">
+        <Button
+          variant="primary"
+          type="button"
+          onClick={() => realizarCompra()}
+        >
+          Completar Compra
+        </Button>
+      </Container>
     </Container>
   );
 };
