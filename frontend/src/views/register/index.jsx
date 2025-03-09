@@ -35,8 +35,8 @@ function Register() {
 
       const result = await response.text();
       //console.log(result);
-      alert("Usuario registrado con éxito");
       navigate("/");
+      alert("Usuario registrado con éxito");
     } catch (error) {
       console.error("Error:", error);
       setRegisterError(

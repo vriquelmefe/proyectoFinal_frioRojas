@@ -14,7 +14,7 @@ function Header() {
 
   return (
     <>
-      <Carousel activeIndex={index} onSelect={handleSelect} className="backgroundCarousel items-center h-50 object-contain">
+      <Carousel activeIndex={index} onSelect={handleSelect} className="backgroundCarousel items-center h-50 object-contain justify-center">
         <Carousel.Item className="justify-content-center align-items-center">
           <Image 
             src={carusel1} 
@@ -45,7 +45,7 @@ function Header() {
             className="d-block mx-auto" 
             alt="Ventilador de Enfriamiento" 
           />
-          <Carousel.Caption style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)', borderRadius: '5px' }}>
+          <Carousel.Caption style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)', borderRadius: '5px' }} className='w-25'>
             <h3 className="textCarousel">Ventilador de Enfriamiento</h3>
             <p className="textCarousel">Solución efectiva para mejorar la circulación de aire.</p>
           </Carousel.Caption>
