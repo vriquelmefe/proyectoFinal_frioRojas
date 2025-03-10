@@ -69,17 +69,13 @@ app.get("/usuario", async (req, res) => {
 //get Productos
 app.get("/productos", async (req, res) => {
   try {
-    // console.log("/productos");
     const articulos = await obtenerArticulos();
-    if (!articulos) {
-      return res.status(404).json({ message: "No se encuentran Articulos" });
+    if (articulos.length === 0) {
+      return res.status(404).json({ message: "No se encontraron artículos." });
     }
-    //console.log(articulos);
     res.json(articulos);
   } catch (error) {
-    res
-      .status(error.code || 500)
-      .json({ message: error.message || "Error interno del servidor" });
+    res.status(error.code || 500).json({ message: error.message || "Error interno del servidor" });
   }
 });
 

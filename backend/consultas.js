@@ -274,23 +274,24 @@ const precioActual = async (idPublicacion) => {
   }
 };
 
-const obtenerArticulos = async (id) => {
+export const obtenerArticulos = async (id) => {
   try {
     let consulta, valores;
     if (!id) {
-      consulta = "select * from articulos";
+      consulta = "SELECT * FROM articulos";
       valores = [];
     } else {
-      consulta = "select * from articulos where id_producto=$1";
+      consulta = "SELECT * FROM articulos WHERE id_producto=$1";
       valores = [id];
     }
     const { rows, rowCount } = await pool.query(consulta, valores);
     return rows;
   } catch (error) {
-    console.error("Error al obtener producto:", error);
+    console.error("Error al obtener productos:", error);
     throw error;
   }
 };
+
 
 const obtenerArticulosCategoria = async (categoria) => {
   try {
