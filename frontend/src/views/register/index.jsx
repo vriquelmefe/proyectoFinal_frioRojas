@@ -16,7 +16,7 @@ function Register() {
       password: "",
     },
   });
-const apiUrl = import.meta.env.VITE_API_URL
+  const apiUrl = import.meta.env.VITE_API_URL;
   const [registerError, setRegisterError] = useState("");
 
   const handleRegister = async (formData) => {
