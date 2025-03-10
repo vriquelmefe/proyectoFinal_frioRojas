@@ -5,9 +5,9 @@ import { useNavigate, Link } from "react-router-dom";
 
 function Login() {
   const navigate = useNavigate();
-  const apiUrl = import.meta.env.VITE_API_URL;
+  // const apiUrl = import.meta.env.VITE_API_URL;
 
-  console.log('api url', apiUrl)
+  // console.log('api url', apiUrl)
   const initialValues = {
     email: "",
     password: "",
@@ -23,13 +23,20 @@ function Login() {
 
   const handleLogin = async (data) => {
     try {
-      const response = await fetch(`${apiUrl}login`, {
+      const response = await fetch(`http://localhost:3000/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(data),
       });
+      // const response = await fetch(`${apiUrl}login`, {
+      //   method: "POST",
+      //   headers: {
+      //     "Content-Type": "application/json",
+      //   },
+      //   body: JSON.stringify(data),
+      // });
 
       console.log('response lo9gin', response)
       if (!response.ok) {

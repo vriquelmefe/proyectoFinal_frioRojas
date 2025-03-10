@@ -16,26 +16,26 @@ function Register() {
       password: "",
     },
   });
-  const apiUrl = import.meta.env.VITE_API_URL;
+  // const apiUrl = import.meta.env.VITE_API_URL;
   const [registerError, setRegisterError] = useState("");
 
   const handleRegister = async (formData) => {
     try {
-      // const response = await fetch("http://localhost:3000/register", {
-      //   method: "POST",
-      //   headers: {
-      //     "Content-Type": "application/json",
-      //   },
-      //   body: JSON.stringify(formData),
-      // });
-      console.log('formdat register', formData)
-      const response = await fetch(`${apiUrl}register`, {
+      const response = await fetch("http://localhost:3000/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(formData),
       });
+      console.log('formdat register', formData)
+      // const response = await fetch(`${apiUrl}register`, {
+      //   method: "POST",
+      //   headers: {
+      //     "Content-Type": "application/json",
+      //   },
+      //   body: JSON.stringify(formData),
+      // });
 
       if (!response.ok) {
         throw new Error("Error en la solicitud");
@@ -123,7 +123,7 @@ function Register() {
                           className="text-danger"
                         />
                       </div>
-                      <div className="mb-3">
+                      {/* <div className="mb-3">
                         <label htmlFor="rol" className="form-label">
                           Rol
                         </label>
@@ -142,7 +142,7 @@ function Register() {
                           as="p"
                           className="text-danger"
                         />
-                      </div>
+                      </div> */}
                       <div className="mb-3">
                         <label htmlFor="password" className="form-label">
                           Password
