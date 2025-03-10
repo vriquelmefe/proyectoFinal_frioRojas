@@ -4,6 +4,7 @@ import { Table } from "react-bootstrap";
 
 const ListarUsuarios = () => {
     const [users, setUsers] = useState([]);
+    const apiUrl = import.meta.env.VITE_API_URL
     useEffect(() => {
         const token = localStorage.getItem("token");
         if (!token) {
@@ -12,7 +13,7 @@ const ListarUsuarios = () => {
         }
         const fetchUsers = async () => {
             try {
-                const response = await fetch("http://localhost:3000/usuarios", {
+                const response = await fetch(`${apiUrl}usuarios`, {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },

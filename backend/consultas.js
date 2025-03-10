@@ -2,16 +2,16 @@ import bcrypt from "bcryptjs";
 import pkg from "pg";
 const { Pool } = pkg;
 const pool = new Pool({
-  host: "localhost",
-  user: "postgres",
-  password: "password",
-  database: "friorojas",
-  port: 5433,
-  allowExitOnIdle: true,
-  // connectionString: process.env.DATABASE_URL,
-  // ssl: {
-  //   rejectUnauthorized: false
-  // }
+  // host: "localhost",
+  // user: "postgres",
+  // password: "password",
+  // database: "friorojas",
+  // port: 5433,
+  // allowExitOnIdle: true,
+  // // connectionString: process.env.DATABASE_URL,
+  // // ssl: {
+  // //   rejectUnauthorized: false
+  // // }
 });
 
 const obtenerUsuario = async (email) => {

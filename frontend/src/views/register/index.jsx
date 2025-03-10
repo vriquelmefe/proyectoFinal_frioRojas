@@ -5,6 +5,7 @@ import { useState } from "react";
 
 function Register() {
   const navigate = useNavigate();
+  const apiUrl = import.meta.env.VITE_API_URL
   const {
     register,
     handleSubmit,
@@ -21,7 +22,14 @@ function Register() {
 
   const handleRegister = async (formData) => {
     try {
-      const response = await fetch("http://localhost:3000/register", {
+      // const response = await fetch("http://localhost:3000/register", {
+      //   method: "POST",
+      //   headers: {
+      //     "Content-Type": "application/json",
+      //   },
+      //   body: JSON.stringify(formData),
+      // });
+      const response = await fetch(`${apiUrl}register`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
