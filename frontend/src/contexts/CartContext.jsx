@@ -4,6 +4,7 @@ import { createContext, useState, useEffect, useContext } from "react";
 const CartContext = createContext();
 
 export const CartProvider = ({ children }) => {
+  const apiUrl = import.meta.env.VITE_API_URL;
   const [carrito, setCarrito] = useState([]);
   const [productos, setProductos] = useState([]);
   const [totalProductos, setTotalProductos] = useState(0);
@@ -97,7 +98,18 @@ export const CartProvider = ({ children }) => {
 
     setFavoritos(updatedFavoritos);
     try {
-      const respuesta = await fetch("http://localhost:3000/favoritos", {
+      // const respuesta = await fetch("http://localhost:3000/favoritos", {
+      //   method: "POST",
+      //   headers: {
+      //     "Content-Type": "application/json",
+      //     Authorization: `Bearer ${localStorage.getItem("token")}`,
+      //   },
+      //   body: JSON.stringify({
+      //     idProducto,
+      //     estado: updatedFavoritos[idProducto],
+      //   }),
+      // });
+      const respuesta = await fetch(`${apiUrl}favoritos`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

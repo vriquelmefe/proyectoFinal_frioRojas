@@ -20,15 +20,15 @@ const Productos = () => {
     productos,
     setProductos,
   } = useCart();
- // const apiUrl = import.meta.env.VITE_API_URL;
+ const apiUrl = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
     const cargarProductos = async () => {
       try {
         setCargando(true);
         //console.log("antes del url");
-        const url = new URL(`http://localhost:3000/productos/`);
-        // const url = new URL(`${apiUrl}productos/`);
+       // const url = new URL(`http://localhost:3000/productos/`);
+       const url = new URL(`${apiUrl}productos/`);
         //console.log("aqui productos");
 
         if (categoria) {

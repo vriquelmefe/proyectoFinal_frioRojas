@@ -3,6 +3,7 @@ import { Button, Form, Card, Container } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 
 const AddProducto = () => {
+  const apiUrl = import.meta.env.VITE_API_URL;
   const navigate = useNavigate();
   const [categorias, setCategorias] = useState([]);
   const [formData, setFormData] = useState({
@@ -61,7 +62,7 @@ const AddProducto = () => {
       formDataToSend.append("stock", formData.stock);
       formDataToSend.append("url", formData.image);
       formDataToSend.append("categoria", formData.categoria);*/
-      const response = await fetch("http://localhost:3000/productos", {
+      const response = await fetch(`${apiUrl}productos`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -97,7 +98,7 @@ const AddProducto = () => {
   };
 
   useEffect(() => {
-    fetch("http://localhost:3000/addProducto")
+    fetch("${apiUrl}addProducto")
       .then((response) => response.json())
       .then((data) => {
         setCategorias(data);

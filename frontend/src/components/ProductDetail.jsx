@@ -5,6 +5,7 @@ import { useCart } from "../contexts/CartContext.jsx";
 import { useState, useEffect } from "react";
 
 const ProductDetail = () => {
+  const apiUrl = import.meta.env.VITE_API_URL;
   const { id } = useParams();
   const [producto, setProducto] = useState(null);
   /*const producto = Object.values(productosData)
@@ -23,7 +24,8 @@ const ProductDetail = () => {
   useEffect(() => {
     const cargarProducto = async () => {
       try {
-        const url = `http://localhost:3000/producto/${id}`;
+        // const url = `http://localhost:3000/producto/${id}`;
+        const url = `${apiUrl}producto/${id}`;
 
         const respuesta = await fetch(url);
         //console.log(respuesta);

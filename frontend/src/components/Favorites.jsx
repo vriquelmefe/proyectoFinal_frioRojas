@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 
 const Favorites = () => {
+  const apiUrl = import.meta.env.VITE_API_URL
   const { favoritos, toggleFavorito } = useCart();
   const [productosFavoritos, setProductosFavoritos] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -16,7 +17,13 @@ const Favorites = () => {
       try {
         setLoading(true);
 
-        const response = await fetch(`http://localhost:3000/favoritos`, {
+        // const response = await fetch(`http://localhost:3000/favoritos`, {
+        //   method: "GET",
+        //   headers: {
+        //     Authorization: `Bearer ${localStorage.getItem("token")}`,
+        //   },
+        // });
+        const response = await fetch(`${apiUrl}favoritos`, {
           method: "GET",
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,

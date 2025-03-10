@@ -45,7 +45,7 @@ const AddPost = () => {
 
       const result = await response.json();
       localStorage.setItem("token", result.token);
-      alert("Publicaciónagregada con exito!");
+      alert("Publicación agregada con exito!");
       // navigate("/");
     } catch (error) {
       console.error("Error:", error);

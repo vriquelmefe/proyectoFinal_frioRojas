@@ -3,6 +3,7 @@ import { Container, Row, Col, Button } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 
 const Cart = () => {
+  const apiUrl = import.meta.env.VITE_API_URL;
   const {
     carrito,
     eliminarDelCarrito,
@@ -38,7 +39,18 @@ const Cart = () => {
 
     try {
       //console.log(productosCarrito);
-      const response = await fetch("http://localhost:3000/ventas", {
+      // const response = await fetch("http://localhost:3000/ventas", {
+      //   method: "POST",
+      //   headers: {
+      //     "Content-Type": "application/json",
+      //     Authorization: `beaver ${localStorage.getItem("token")}`,
+      //   },
+      //   body: JSON.stringify({
+      //     productos: productosCarrito,
+      //     total: obtenerTotalPrecio(),
+      //   }),
+      // });
+      const response = await fetch(`${apiUrl}ventas`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -49,7 +61,6 @@ const Cart = () => {
           total: obtenerTotalPrecio(),
         }),
       });
-
       if (!response.ok) {
         const errorData = await response.json();
         
