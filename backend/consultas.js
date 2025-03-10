@@ -274,7 +274,7 @@ const precioActual = async (idPublicacion) => {
   }
 };
 
-export const obtenerArticulos = async (id) => {
+const obtenerArticulos = async (id) => {
   try {
     let consulta, valores;
     if (!id) {

@@ -64,7 +64,7 @@ const apiUrl = import.meta.env.VITE_API_URL
                   style={{ backgroundColor: "#1D1F3D" }}
                 >
                   <img
-                    src="/logo.png"
+                    src={"logo.png"}
                     className="img-fluid rounded-start"
                     alt="Imagen de registro"
                   />
