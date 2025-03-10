@@ -54,7 +54,7 @@ const Cart = () => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `beaver ${localStorage.getItem("token")}`,
+          Authorization: `bearer ${localStorage.getItem("token")}`,
         },
         body: JSON.stringify({
           productos: productosCarrito,
