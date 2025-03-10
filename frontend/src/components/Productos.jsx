@@ -27,7 +27,7 @@ const Productos = () => {
       try {
         setCargando(true);
         //console.log("antes del url");
-        const url = new URL(`${apiUrl}/productos/`);
+        const url = new URL(`${apiUrl}productos/`);
         //console.log("aqui productos");
 
         if (categoria) {
