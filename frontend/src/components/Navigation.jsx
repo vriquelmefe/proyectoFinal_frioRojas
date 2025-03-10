@@ -67,7 +67,7 @@ function Navigation() {
                   🔒 Logout
                 </Button>
               </Link>
-              <Link to="/addPProducto" className="mx-3 pt-2">
+              <Link to="/addProducto" className="mx-3 pt-2">
                 <Button
                   variant="outline-info"
                   className="text-white" 
