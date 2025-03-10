@@ -80,11 +80,15 @@ const ProductDetail = () => {
 
               <div className="d-flex align-items-center justify-content-center">
                 <Button
-                  variant="primary"
+          
                   onClick={handleAgregarCarrito}
                   className="ms-3"
+                  style={{
+                    backgroundColor: "#1D1F3D",
+                    borderColor: "#1D1F3D",
+                  }}
                 >
-                  Agregar al Carrito
+                  🛒 Agregar al Carrito
                 </Button>
               </div>
             </Card.Body>
@@ -98,12 +102,16 @@ const ProductDetail = () => {
         </Col>
         <div className="d-flex align-items-center justify-content-center mt-4">
           <Button
-            variant="primary"
             type="button"
             onClick={volver}
-            className="ms-3"
+            className="ms-3 text-dark"
+            style={{
+              backgroundColor: "#fff",
+              borderColor: "#1D1F3D",
+              border: "2px solid"
+            }}
           >
-            Volver
+             ← Volver
           </Button>
         </div>
       </Row>
