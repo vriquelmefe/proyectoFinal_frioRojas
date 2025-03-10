@@ -31,6 +31,7 @@ function Login() {
         body: JSON.stringify(data),
       });
 
+      console.log('response lo9gin', response)
       if (!response.ok) {
         throw new Error("Error en la solicitud");
       }
