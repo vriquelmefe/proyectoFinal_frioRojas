@@ -15,11 +15,10 @@ const ProductDetail = () => {
   const { carrito, agregarAlCarrito } = useCart();
   const [cantidad, setCantidad] = useState(1);
   const [mensaje, setMensaje] = useState("");
-  const navigate = useNavigate();
+ // const navigate = useNavigate();
   const volver = (e) => {
     e.preventDefault();
-
-    navigate("/");
+    window.history.back();
   };
   useEffect(() => {
     const cargarProducto = async () => {

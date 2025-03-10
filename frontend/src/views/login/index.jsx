@@ -1,10 +1,12 @@
 import { useForm } from "react-hook-form";
 import { Card, Form, Button } from "react-bootstrap";
-import { useState } from "react";
+import { useState,useContext } from "react";
 import { useNavigate, Link } from "react-router-dom";
+import { Context } from "../../contexts/Context";
 
 function Login() {
   const navigate = useNavigate();
+  const { token, handleToken, handleTipoUsuario } = useContext(Context);
   const apiUrl = import.meta.env.VITE_API_URL;
 
   // console.log('api url', apiUrl)
@@ -46,6 +48,8 @@ function Login() {
       const result = await response.json();
       //console.log("Token:", result.token);
       localStorage.setItem("token", result.token);
+      handleToken(result.token);
+      handleTipoUsuario(result.usuario.rol);
       alert("Inicio de sesión exitoso");
       navigate("/");
       window.location.reload();

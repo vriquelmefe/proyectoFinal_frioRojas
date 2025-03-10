@@ -1,11 +1,15 @@
 import { useCart } from "../contexts/CartContext.jsx";
 import { Container, Row, Col, Button } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
+import { Context } from "../contexts/Context.jsx";
+import { useContext } from "react";
 
 const Cart = () => {
+  const { token } = useContext(Context);
   const apiUrl = import.meta.env.VITE_API_URL;
   const {
     carrito,
+    dropCarrito,
     eliminarDelCarrito,
     actualizarCantidad,
     obtenerTotalPrecio,
@@ -54,7 +58,7 @@ const Cart = () => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `bearer ${localStorage.getItem("token")}`,
+          Authorization: `bearer ${token}`,
         },
         body: JSON.stringify({
           productos: productosCarrito,
@@ -80,6 +84,7 @@ const Cart = () => {
       console.log(result);
 
       alert("Compra realizada con éxito!");
+      dropCarrito(0);
       navigate("/home");
       setCarrito([])
     } catch (error) {

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState , useContext } from "react";
 import { Link } from "react-router-dom";
 import Button from "react-bootstrap/Button";
 import Container from "react-bootstrap/Container";
@@ -6,8 +6,10 @@ import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
 import { useCart } from "../contexts/CartContext.jsx";
 import { Alert } from "react-bootstrap";
+import { Context } from "../contexts/Context.jsx";
 
 function Navigation() {
+  const { token, handleToken, logOut, tipoUsuario } = useContext(Context);
   const { obtenerTotalPrecio,carrito } = useCart();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
@@ -22,11 +24,12 @@ function Navigation() {
 
   useEffect(() => {
     checkAuthToken();
-  }, []);
+  }, [token]);
 
   const handleLogout = () => {
-    localStorage.removeItem("token");
+    handleToken("");
     setIsLoggedIn(false);
+    logOut()
   };
   //console.log(localStorage.getItem("token"));
   return (
@@ -67,14 +70,20 @@ function Navigation() {
                   🔒 Logout
                 </Button>
               </Link>
-              <Link to="/addProducto" className="mx-3 pt-2">
-                <Button
-                  variant="outline-info"
-                  className="text-white" 
-                >
-                  ➕ Agregar artículos
-                </Button>
-              </Link>
+              {tipoUsuario === "admin" && (
+                <>
+                  <Link to="/addProducto" className="mx-3 pt-2">
+                    <Button variant="outline-info" className="text-white">
+                      ➕ Agregar artículos
+                    </Button>
+                  </Link>
+                  <Link to="/usuarios" className="mx-3 pt-2">
+                    <Button variant="outline-info" className="text-white">
+                      Ver usuarios
+                    </Button>
+                  </Link>
+                </>
+              )}
               <Link to="/favoritos" className="mx-3 pt-2">
                 <Button
                   variant="outline-info"

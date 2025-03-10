@@ -1,10 +1,12 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { ErrorMessage } from "@hookform/error-message";
-import { useState } from "react";
+import { useContext, useState } from "react";
+import { Context } from "../../contexts/Context";
 
 function Register() {
   const navigate = useNavigate();
+  const { handleToken } = useContext(Context);
   const apiUrl = import.meta.env.VITE_API_URL
   const {
     register,
@@ -41,10 +43,12 @@ function Register() {
         throw new Error("Error en la solicitud");
       }
 
-      const result = await response.text();
+      const result = await response.json();
+      handleToken(result.token);
       //console.log(result);
       alert("Usuario registrado con éxito");
       navigate("/");
+      
     } catch (error) {
       console.error("Error:", error);
       setRegisterError(

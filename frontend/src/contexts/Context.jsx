@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import { createContext, useState } from "react";
+import { createContext, useState ,useEffect} from "react";
 
 // Creamos el contexto
 export const Context = createContext(null);
@@ -12,14 +12,17 @@ const ContextProvider = ({ children }) => {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [tipoUsuario, setTipoUsuario] = useState(null);
 
+  const handleTipoUsuario = (updatetipoUsuario) =>
+    setTipoUsuario(updatetipoUsuario);
   const handleToken = (updateToken) => setToken(updateToken);
   const handleUser = (updateUser) => setUser(updateUser);
   const handlePass = (updatePass) => setPass(updatePass);
   const handleTokenData = (updateTokenData) => setTokenData(updateTokenData);
 
   const logOut = () => {
-    handleToken(null);
+    setToken(null);
     handleUser(null);
     setTokenData(null);
     localStorage.removeItem("token");
@@ -100,6 +103,8 @@ const ContextProvider = ({ children }) => {
         loading,
         error,
         validateUser,
+        tipoUsuario,
+        handleTipoUsuario,
       }}
     >
       {children}

@@ -1,9 +1,11 @@
 /* eslint-disable react/prop-types */
 import { createContext, useState, useEffect, useContext } from "react";
+import { Context } from "./Context";
 
 const CartContext = createContext();
 
 export const CartProvider = ({ children }) => {
+  const {token} = useContext(Context)
   const apiUrl = import.meta.env.VITE_API_URL;
   const [carrito, setCarrito] = useState([]);
   const [productos, setProductos] = useState([]);
@@ -17,6 +19,7 @@ export const CartProvider = ({ children }) => {
       return {};
     }
   });
+  const dropCarrito = () => setCarrito([]);
   useEffect(() => {
     localStorage.setItem("favoritos", JSON.stringify(favoritos));
   }, [favoritos]);
@@ -98,22 +101,11 @@ export const CartProvider = ({ children }) => {
 
     setFavoritos(updatedFavoritos);
     try {
-      // const respuesta = await fetch("http://localhost:3000/favoritos", {
-      //   method: "POST",
-      //   headers: {
-      //     "Content-Type": "application/json",
-      //     Authorization: `Bearer ${localStorage.getItem("token")}`,
-      //   },
-      //   body: JSON.stringify({
-      //     idProducto,
-      //     estado: updatedFavoritos[idProducto],
-      //   }),
-      // });
       const respuesta = await fetch(`${apiUrl}favoritos`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
           idProducto,
@@ -124,12 +116,11 @@ export const CartProvider = ({ children }) => {
       if (!respuesta.ok) {
         throw new Error("Error al actualizar los favoritos");
       }
-
-      console.log("Favorito actualizado en la base de datos");
+      const data = await respuesta.json();
+      console.log("Favorito actualizado en la base de datos", data);
     } catch (error) {
       console.error("Error al enviar los favoritos a la base de datos:", error);
     }
-  };
 
   return (
     <CartContext.Provider
@@ -146,6 +137,7 @@ export const CartProvider = ({ children }) => {
         setTotalProductos,
         productos,
         setProductos,
+        dropCarrito,
       }}
     >
       {children}

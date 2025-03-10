@@ -2,9 +2,11 @@ import { Container, Row, Col, Card, Button } from "react-bootstrap";
 import { useCart } from "../contexts/CartContext";
 //import productosData from "../data/data";
 import { useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
+import { Context } from "../contexts/Context";
 
 const Favorites = () => {
+  const { token } = useContext(Context); 
   const apiUrl = import.meta.env.VITE_API_URL
   const { favoritos, toggleFavorito } = useCart();
   const [productosFavoritos, setProductosFavoritos] = useState([]);
@@ -14,19 +16,18 @@ const Favorites = () => {
 
   useEffect(() => {
     const fetchFavoritos = async () => {
+      if (!token) {
+        setError("No estás autenticado. Por favor, inicia sesión.");
+        setLoading(false);
+        return;
+      }
       try {
         setLoading(true);
 
-        // const response = await fetch(`http://localhost:3000/favoritos`, {
-        //   method: "GET",
-        //   headers: {
-        //     Authorization: `Bearer ${localStorage.getItem("token")}`,
-        //   },
-        // });
         const response = await fetch(`${apiUrl}favoritos`, {
           method: "GET",
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            Authorization: `Bearer ${token}`,
           },
         });
 
@@ -36,7 +37,7 @@ const Favorites = () => {
 
         const productos = await response.json();
         setProductosFavoritos(productos);
-        console.log(productos);
+        //console.log(productos);
       } catch (error) {
         console.error("Error al cargar favoritos:", error);
         setError("No se pudieron cargar los productos favoritos.");
@@ -45,7 +46,7 @@ const Favorites = () => {
       }
     };
     fetchFavoritos();
-  }, []);
+  }, [token]);
 
   if (loading) return <p className="text-center">Cargando favoritos...</p>;
   if (error) return <p className="text-center">{error}</p>;
