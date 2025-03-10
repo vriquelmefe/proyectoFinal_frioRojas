@@ -8,7 +8,10 @@ const pool = new Pool({
   // database: "friorojas",
   // port: 5432,
   // allowExitOnIdle: true,
-  connectionString: process.env.DATABASE_URL
+  connectionString: process.env.DATABASE_URL,
+  ssl: {
+    rejectUnauthorized: false
+  }
 });
 
 const obtenerUsuario = async (email) => {
