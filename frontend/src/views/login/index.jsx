@@ -120,7 +120,7 @@ function Login() {
                 </div>
                 <div className="col-md-4">
                   <img
-                    src="./public/logo.png"
+                   src={"logo.png"}
                     className="img-fluid rounded-end"
                     alt="Imagen de login"
                   />
