@@ -28,6 +28,7 @@ function Register() {
       //   },
       //   body: JSON.stringify(formData),
       // });
+      console.log('formdat register', formData)
       const response = await fetch(`${apiUrl}register`, {
         method: "POST",
         headers: {
@@ -122,7 +123,7 @@ function Register() {
                           className="text-danger"
                         />
                       </div>
-                      {/*<div className="mb-3">
+                      <div className="mb-3">
                         <label htmlFor="rol" className="form-label">
                           Rol
                         </label>
@@ -141,7 +142,7 @@ function Register() {
                           as="p"
                           className="text-danger"
                         />
-                      </div>*/}
+                      </div>
                       <div className="mb-3">
                         <label htmlFor="password" className="form-label">
                           Password

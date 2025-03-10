@@ -338,7 +338,7 @@ app.post("/register", async (req, res) => {
       return res.status(400).json({ message: "El usuario ya existe" });
     }
 
-    const usuario = await registrarUsuario(nombre, email, password);
+    const usuario = await registrarUsuario(nombre, email,rol, password);
 
     const token = jwt.sign({ email: usuario.email }, "desafioLatam", {
       expiresIn: "10m",
