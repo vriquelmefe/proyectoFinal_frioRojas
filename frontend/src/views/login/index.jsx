@@ -7,6 +7,7 @@ function Login() {
   const navigate = useNavigate();
   const apiUrl = import.meta.env.VITE_API_URL;
 
+  console.log('api url', apiUrl)
   const initialValues = {
     email: "",
     password: "",
