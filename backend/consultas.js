@@ -8,7 +8,7 @@ const pool = new Pool({
   // database: "friorojas",
   // port: 5432,
   // allowExitOnIdle: true,
-  connectionString: process.env.VITE_API_URL
+  connectionString: import.meta.env.VITE_API_URL
 });
 
 const obtenerUsuario = async (email) => {
