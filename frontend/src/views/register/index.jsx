@@ -16,12 +16,19 @@ function Register() {
       password: "",
     },
   });
-
+const apiUrl = import.meta.env.VITE_API_URL
   const [registerError, setRegisterError] = useState("");
 
   const handleRegister = async (formData) => {
     try {
-      const response = await fetch("http://localhost:3000/register", {
+      // const response = await fetch("http://localhost:3000/register", {
+      //   method: "POST",
+      //   headers: {
+      //     "Content-Type": "application/json",
+      //   },
+      //   body: JSON.stringify(formData),
+      // });
+      const response = await fetch(`${apiUrl}/register`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -33,7 +40,7 @@ function Register() {
         throw new Error("Error en la solicitud");
       }
 
-      const result = await response.text();
+      // const result = await response.text();
       //console.log(result);
       alert("Usuario registrado con éxito");
       navigate("/");
