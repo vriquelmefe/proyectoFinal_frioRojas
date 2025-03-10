@@ -8,7 +8,7 @@ const pool = new Pool({
   // database: "friorojas",
   // port: 5433,
   // allowExitOnIdle: true,
-  connectionString: `${process.env.DATABASE_URL}"`,
+  connectionString: `${process.env.DATABASE_URL}`,
   ssl: {
     rejectUnauthorized: false
   }
