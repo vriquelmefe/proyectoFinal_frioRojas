@@ -8,12 +8,13 @@ const Cart = () => {
     eliminarDelCarrito,
     actualizarCantidad,
     obtenerTotalPrecio,
+    setCarrito
   } = useCart();
   const navigate = useNavigate();
 
-  if (carrito.length === 0) {
-    return <Container className="my-5">El carrito está vacío.</Container>;
-  }
+  // if (carrito.length === 0) {
+  //   return <Container className="my-5">El carrito está vacío.</Container>;
+  // }
 
   const handleEliminarDelCarrito = (id) => {
     eliminarDelCarrito(id);
@@ -51,6 +52,14 @@ const Cart = () => {
 
       if (!response.ok) {
         const errorData = await response.json();
+        
+        if (response.status === 401 && errorData.message === "jwt expired") {
+          alert("Token expirado, vuelva a iniciar sesión por favor.");
+          localStorage.removeItem("token");
+          navigate("/login");
+          return;
+        }
+
         throw new Error(
           `Error en la compra: ${errorData.message || response.statusText}`
         );
@@ -60,8 +69,8 @@ const Cart = () => {
       console.log(result);
 
       alert("Compra realizada con éxito!");
-
-      navigate("/");
+      navigate("/home");
+      setCarrito([])
     } catch (error) {
       console.error("Error al realizar la compra:", error);
       alert(
@@ -126,6 +135,15 @@ const Cart = () => {
           Completar Compra
         </Button>
       </Container>
+      <style>
+        {
+          `
+          .colorButton{
+          background-color: #1D1F3D
+          }
+          `
+        }
+      </style>
     </Container>
   );
 };

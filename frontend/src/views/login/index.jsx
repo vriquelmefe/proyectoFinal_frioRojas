@@ -48,6 +48,7 @@ function Login() {
       localStorage.setItem("token", result.token);
       alert("Inicio de sesión exitoso");
       navigate("/");
+      window.location.reload();
     } catch (error) {
       console.error("Error:", error);
       setLoginError(

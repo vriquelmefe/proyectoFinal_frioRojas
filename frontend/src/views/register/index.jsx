@@ -16,7 +16,7 @@ function Register() {
       password: "",
     },
   });
-  // const apiUrl = import.meta.env.VITE_API_URL;
+
   const [registerError, setRegisterError] = useState("");
 
   const handleRegister = async (formData) => {
@@ -28,20 +28,12 @@ function Register() {
         },
         body: JSON.stringify(formData),
       });
-      console.log('formdat register', formData)
-      // const response = await fetch(`${apiUrl}register`, {
-      //   method: "POST",
-      //   headers: {
-      //     "Content-Type": "application/json",
-      //   },
-      //   body: JSON.stringify(formData),
-      // });
 
       if (!response.ok) {
         throw new Error("Error en la solicitud");
       }
 
-      // const result = await response.text();
+      const result = await response.text();
       //console.log(result);
       alert("Usuario registrado con éxito");
       navigate("/");
@@ -65,7 +57,7 @@ function Register() {
                   style={{ backgroundColor: "#1D1F3D" }}
                 >
                   <img
-                    src={"logo.png"}
+                    src="/logo.png"
                     className="img-fluid rounded-start"
                     alt="Imagen de registro"
                   />
@@ -123,7 +115,7 @@ function Register() {
                           className="text-danger"
                         />
                       </div>
-                      {/* <div className="mb-3">
+                      {/*<div className="mb-3">
                         <label htmlFor="rol" className="form-label">
                           Rol
                         </label>
@@ -142,7 +134,7 @@ function Register() {
                           as="p"
                           className="text-danger"
                         />
-                      </div> */}
+                      </div>*/}
                       <div className="mb-3">
                         <label htmlFor="password" className="form-label">
                           Password

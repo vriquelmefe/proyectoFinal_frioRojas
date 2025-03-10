@@ -14,6 +14,7 @@ import Cart from "./components/Cart.jsx";
 import { CartProvider } from "./contexts/CartContext.jsx";
 import Favorites from "./components/Favorites.jsx";
 import AddPost from "./components/AddPost.jsx";
+import ListarUsuarios from "./components/ListarUsuarios.js";
 
 function App() {
   const globalState = useDeveloper();
@@ -27,12 +28,13 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/register" element={<Register />} />
             <Route path="/login" element={<Login />} />
-            <Route path="/productos/:categoria" element={<Productos />} />
+            <Route path="/productos/:categoria" element={ <Productos />} />
             <Route path="/producto/:id" element={<ProductDetail />} />
             <Route path="/cart" element={<Cart />} />
             <Route path="/favoritos" element={<Favorites />} />
             <Route path="/addPost" element={<AddPost />} />
             <Route path="/addProducto" element={<AddProducto />} />
+            <Route path="/usuarios" element={<ListarUsuarios />} />
           </Routes>
         </BrowserRouter>
       </CartProvider>

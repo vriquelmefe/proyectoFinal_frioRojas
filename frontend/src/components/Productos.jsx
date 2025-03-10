@@ -83,7 +83,7 @@ const Productos = () => {
   if (error) return <p className="text-center">Error: {error}</p>;
   return (
     <Container className="my-8">
-      <h2 className="text-center">
+      <h2 className="text-center py-4">
         Productos - {categoria ? categoria.replace("-", " ") : "Todos"}
       </h2>
       <Row className="justify-content-center">
@@ -108,12 +108,15 @@ const Productos = () => {
                       {favoritos[producto.id_producto] ? "❤️" : "🤍"}
                     </Button>
                   </div>
-                  <Card.Text>{producto.precio}</Card.Text>
                   <Card.Text className="text-truncate">
                     {producto.descripcion}
                   </Card.Text>
+                  <Card.Text> $ {producto.precio}</Card.Text>
                   <Button
-                    variant="primary"
+                    style={{
+                      backgroundColor: "#1D1F3D",
+                      borderColor: "#1D1F3D",
+                    }}
                     onClick={() => verDetalle(producto.id_producto)}
                   >
                     Ver Detalle

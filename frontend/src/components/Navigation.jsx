@@ -5,9 +5,10 @@ import Container from "react-bootstrap/Container";
 import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
 import { useCart } from "../contexts/CartContext.jsx";
+import { Alert } from "react-bootstrap";
 
 function Navigation() {
-  const { obtenerTotalPrecio } = useCart();
+  const { obtenerTotalPrecio,carrito } = useCart();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const checkAuthToken = () => {
@@ -69,7 +70,7 @@ function Navigation() {
               <Link to="/addPost" className="mx-3 pt-2">
                 <Button
                   variant="outline-info"
-                  className="text-white"
+                  className="text-white" 
                 >
                   ➕ Agregar artículos
                 </Button>
@@ -100,11 +101,14 @@ function Navigation() {
         </Nav>
 
         <Nav className="justify-content-end ms-auto">
+          {carrito.length === 0 ?
+          <Alert  variant="warning" className="my-5">El carrito está vacío.</Alert> : 
           <Link to="/cart">
             <Button variant="outline-light">
               🛒 Total: {obtenerTotalPrecio()}
             </Button>
           </Link>
+  }
         </Nav>
       </Container>
     </Navbar>

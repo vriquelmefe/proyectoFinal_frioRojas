@@ -193,14 +193,17 @@ const AddProducto = () => {
                 ))}
               </Form.Select>
             </Form.Group>
-            <Button variant="primary" type="submit">
+            <Button type="submit"  style={{
+                            backgroundColor: "#1D1F3D",
+                            borderColor: "#1D1F3D",
+                          }}>
               Agregar
             </Button>
           </Form>
         </Card.Body>
       </Card>
       <Container className="d-flex justify-content-center mt-5">
-        <Button variant="primary" type="button" onClick={salir}>
+        <Button  type="button" onClick={salir} >
           Volver
         </Button>
       </Container>
