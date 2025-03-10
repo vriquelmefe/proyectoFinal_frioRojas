@@ -5,8 +5,8 @@ import { Context } from "./Context";
 const CartContext = createContext();
 
 export const CartProvider = ({ children }) => {
-  const {token} = useContext(Context)
   const apiUrl = import.meta.env.VITE_API_URL;
+  const { token } = useContext(Context);
   const [carrito, setCarrito] = useState([]);
   const [productos, setProductos] = useState([]);
   const [totalProductos, setTotalProductos] = useState(0);
@@ -19,6 +19,7 @@ export const CartProvider = ({ children }) => {
       return {};
     }
   });
+
   const dropCarrito = () => setCarrito([]);
   useEffect(() => {
     localStorage.setItem("favoritos", JSON.stringify(favoritos));
@@ -121,6 +122,7 @@ export const CartProvider = ({ children }) => {
     } catch (error) {
       console.error("Error al enviar los favoritos a la base de datos:", error);
     }
+  };
 
   return (
     <CartContext.Provider
