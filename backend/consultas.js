@@ -10,7 +10,7 @@ const pool = new Pool({
   // allowExitOnIdle: true,
   connectionString: process.env.DATABASE_URL,
   ssl: {
-    rejectUnauthorized: false
+    rejectUnauthorized: false, // Esto permite que se use SSL sin validar el certificado
   }
 });
 
@@ -44,16 +44,16 @@ const obtenerUsuarioId = async (id) => {
   }
 };
 
-const registrarUsuario = async (nombre, email, rol, password) => {
+const registrarUsuario = async (nombre, email, password) => {
   try {
     const passwordEncriptada = bcrypt.hashSync(password, 10);
     password = passwordEncriptada;
-    const consulta = `insert into usuarios (nombre,email,rol,password) values($1,$2,$3,$4 ) returning id_usuario,nombre,email`;
+    const consulta = `insert into usuarios (nombre,email,password) values($1,$2,$3,$4 ) returning id_usuario,nombre,email`;
 
     const { rows, rowCount } = await pool.query(consulta, [
       nombre,
       email,
-      rol,
+      "usuario",
       password,
     ]);
 
