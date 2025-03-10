@@ -133,6 +133,7 @@ const AddProducto = () => {
                 rows={5}
                 placeholder="Describe el producto"
                 name="description"
+                style={{ resize: "none", width: "100%", height: "150px" }}
                 value={formData.description}
                 onChange={handleChange}
                 required

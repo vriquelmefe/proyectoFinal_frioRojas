@@ -1,10 +1,15 @@
 import { useCart } from "../contexts/CartContext.jsx";
 import { Container, Row, Col, Button } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
+import { Context } from "../contexts/Context.jsx";
+import { useContext } from "react";
 
 const Cart = () => {
+  const { token } = useContext(Context);
+
   const {
     carrito,
+    dropCarrito,
     eliminarDelCarrito,
     actualizarCantidad,
     obtenerTotalPrecio,
@@ -41,7 +46,7 @@ const Cart = () => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `beaver ${localStorage.getItem("token")}`,
+          Authorization: `beaver ${token}`,
         },
         body: JSON.stringify({
           productos: productosCarrito,
@@ -57,10 +62,10 @@ const Cart = () => {
       }
 
       const result = await response.json();
-      console.log(result);
+      //console.log(result);
 
       alert("Compra realizada con éxito!");
-
+      dropCarrito(0);
       navigate("/");
     } catch (error) {
       console.error("Error al realizar la compra:", error);

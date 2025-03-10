@@ -1,17 +1,18 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import Button from "react-bootstrap/Button";
 import Container from "react-bootstrap/Container";
 import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
 import { useCart } from "../contexts/CartContext.jsx";
+import { Context } from "../contexts/Context.jsx";
 
 function Navigation() {
+  const { token, handleToken, logOut, tipoUsuario } = useContext(Context);
   const { obtenerTotalPrecio } = useCart();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const checkAuthToken = () => {
-    const token = localStorage.getItem("token");
     if (token) {
       setIsLoggedIn(true);
     } else {
@@ -21,13 +22,15 @@ function Navigation() {
 
   useEffect(() => {
     checkAuthToken();
-  }, []);
+  }, [token]);
 
   const handleLogout = () => {
-    localStorage.removeItem("token");
+    handleToken("");
     setIsLoggedIn(false);
+    logOut(); // Reset token in context
   };
-  //console.log(localStorage.getItem("token"));
+
+  //console.log("tipo de tipoUsuario", tipoUsuario);
   return (
     <Navbar data-bs-theme="dark" className="navegacion navigationBar">
       <Container>
@@ -57,6 +60,25 @@ function Navigation() {
 
           {isLoggedIn ? (
             <>
+              {tipoUsuario === "admin" && (
+                <>
+                  <Link to="/addProducto" className="mx-3 pt-2">
+                    <Button variant="outline-info" className="text-white">
+                      ➕ Agregar artículos
+                    </Button>
+                  </Link>
+                  <Link to="/usuarios" className="mx-3 pt-2">
+                    <Button variant="outline-info" className="text-white">
+                      Ver usuarios
+                    </Button>
+                  </Link>
+                </>
+              )}
+              <Link to="/favoritos" className="mx-3 pt-2">
+                <Button variant="outline-info" className="text-white">
+                  ❤️ Favoritos
+                </Button>
+              </Link>
               <Link to="/" className="mx-3 pt-2">
                 <Button
                   variant="outline-info"

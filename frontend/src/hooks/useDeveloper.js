@@ -1,11 +1,11 @@
-import { useState } from 'react'
+import { useState } from "react";
 
 const useDeveloper = () => {
-  const [user, setUser] = useState(null)
+  const [user, setUser] = useState(null);
 
-  const setDeveloper = (develop) => setUser(develop)
+  const setDeveloper = (develop) => setUser(develop);
 
-  return { getDeveloper: user, setDeveloper }
-}
+  return { getDeveloper: user, setDeveloper };
+};
 
-export default useDeveloper
+export default useDeveloper;

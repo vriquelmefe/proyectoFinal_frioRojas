@@ -13,7 +13,7 @@ import ProductDetail from "./components/ProductDetail.jsx";
 import Cart from "./components/Cart.jsx";
 import { CartProvider } from "./contexts/CartContext.jsx";
 import Favorites from "./components/Favorites.jsx";
-import AddPost from "./components/AddPost.jsx";
+//import AddPost from "./components/AddPost.jsx";
 
 function App() {
   const globalState = useDeveloper();
@@ -31,7 +31,7 @@ function App() {
             <Route path="/producto/:id" element={<ProductDetail />} />
             <Route path="/cart" element={<Cart />} />
             <Route path="/favoritos" element={<Favorites />} />
-            <Route path="/addPost" element={<AddPost />} />
+
             <Route path="/addProducto" element={<AddProducto />} />
           </Routes>
         </BrowserRouter>

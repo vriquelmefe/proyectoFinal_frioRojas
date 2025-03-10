@@ -14,7 +14,7 @@ create table articulos(
 	descripcion text not null, 
 	precio decimal(10,2) not null CHECK (precio >= 0), 
 	stock int not null CHECK (stock >= 0), 
-	url varchar(255) not null,
+	url varchar not null,
   categoria varchar(50)not null,
 
 	);	

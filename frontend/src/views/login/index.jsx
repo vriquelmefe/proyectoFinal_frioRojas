@@ -1,11 +1,12 @@
 import { useForm } from "react-hook-form";
 import { Card, Form, Button } from "react-bootstrap";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
+import { Context } from "../../contexts/Context";
 
 function Login() {
   const navigate = useNavigate();
-
+  const { token, handleToken, handleTipoUsuario } = useContext(Context);
   const initialValues = {
     email: "",
     password: "",
@@ -34,8 +35,10 @@ function Login() {
       }
 
       const result = await response.json();
-      //console.log("Token:", result.token);
-      localStorage.setItem("token", result.token);
+      //console.log("Token:", result.token, "todo:", result);
+      handleToken(result.token);
+      handleTipoUsuario(result.usuario.rol);
+      //console.log(token);
       alert("Inicio de sesión exitoso");
       navigate("/");
     } catch (error) {
