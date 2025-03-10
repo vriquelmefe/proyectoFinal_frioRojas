@@ -67,7 +67,7 @@ app.get("/usuario", async (req, res) => {
   }
 });
 //get Productos
-app.get("/productos", async (req, res) => {
+app.get("/productos/", async (req, res) => {
   try {
     // console.log("/productos");
     const articulos = await obtenerArticulos();
