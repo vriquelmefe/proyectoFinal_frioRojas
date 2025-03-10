@@ -4,6 +4,7 @@ import jwt from "jsonwebtoken";
 const app = express();
 import {
   obtenerUsuario,
+  obtenerTodosLosUsuarios,
   registrarUsuario,
   verificarUsuario,
   usuarioExiste,
@@ -60,6 +61,29 @@ app.get("/usuario", async (req, res) => {
         rol: "algo",
       },
     });*/
+  } catch (error) {
+    res
+      .status(error.code || 500)
+      .json({ message: error.message || "Error interno del servidor" });
+  }
+});
+app.get("/usuarios", async (req, res) => {
+  try {
+    const autorization = req.header("Authorization");
+    if (!autorization) {
+      return res.status(401).json({ message: "No se proporcionó un token" });
+    }
+    const token = autorization.split(" ")[1];
+    if (!token) {
+      return res.status(401).json({ message: "Token no válido" });
+    }
+
+    const usuarios = await obtenerTodosLosUsuarios();
+    if (!usuarios) {
+      return res.status(404).json({ message: "Usuario no encontrado" });
+    }
+
+    res.send(usuarios);
   } catch (error) {
     res
       .status(error.code || 500)
@@ -338,7 +362,7 @@ app.post("/register", async (req, res) => {
       return res.status(400).json({ message: "El usuario ya existe" });
     }
 
-    const usuario = await registrarUsuario(nombre, email,rol, password);
+    const usuario = await registrarUsuario(nombre, email, password);
 
     const token = jwt.sign({ email: usuario.email }, "desafioLatam", {
       expiresIn: "10m",

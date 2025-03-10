@@ -27,6 +27,22 @@ const obtenerUsuario = async (email) => {
     throw error;
   }
 };
+const obtenerTodosLosUsuarios = async () => {
+  try {
+    let consulta, valores;
+
+      consulta = "select * from usuarios";
+      valores = [];
+   
+    const { rows, rowCount } = await pool.query(consulta, valores);
+    if (!rowCount) {
+      throw { message: "error al cargar informacion", code: 404 };
+    }
+    return rows;
+  } catch (error) {
+    throw error;
+  }
+};
 
 const obtenerUsuarioId = async (id) => {
   try {
@@ -48,7 +64,7 @@ const registrarUsuario = async (nombre, email, password) => {
   try {
     const passwordEncriptada = bcrypt.hashSync(password, 10);
     password = passwordEncriptada;
-    const consulta = `insert into usuarios (nombre,email,password) values($1,$2,$3,$4 ) returning id_usuario,nombre,email`;
+    const consulta = `insert into usuarios (nombre,email,rol,password) values($1,$2,$3,$4 ) returning id_usuario,nombre,email`;
 
     const { rows, rowCount } = await pool.query(consulta, [
       nombre,
@@ -380,6 +396,7 @@ const obtenerCategorias = async () => {
 
 export {
   obtenerUsuario,
+  obtenerTodosLosUsuarios,
   registrarUsuario,
   verificarUsuario,
   usuarioExiste,
