@@ -14,7 +14,7 @@ import Cart from "./components/Cart.jsx";
 import { CartProvider } from "./contexts/CartContext.jsx";
 import Favorites from "./components/Favorites.jsx";
 import AddPost from "./components/AddPost.jsx";
-import ListarUsuarios from "./components/ListarUsuarios.js";
+import ListarUsuarios from "./components/ListarUsuarios.jsx";
 
 function App() {
   const globalState = useDeveloper();
