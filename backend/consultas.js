@@ -44,7 +44,7 @@ const obtenerUsuarioId = async (id) => {
   }
 };
 
-const registrarUsuario = async (nombre, email, password) => {
+const registrarUsuario = async (nombre, email, rol, password) => {
   try {
     const passwordEncriptada = bcrypt.hashSync(password, 10);
     password = passwordEncriptada;
@@ -53,7 +53,7 @@ const registrarUsuario = async (nombre, email, password) => {
     const { rows, rowCount } = await pool.query(consulta, [
       nombre,
       email,
-      "usuario",
+      rol,
       password,
     ]);
 
