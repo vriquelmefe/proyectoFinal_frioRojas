@@ -8,7 +8,7 @@ const pool = new Pool({
   // database: "friorojas",
   // port: 5433,
   // allowExitOnIdle: true,
-  connectionString: process.env.DATABASE_URL,
+  connectionString: "postgresql://friorojas_gvps_user:1ViAHFGAeEZACuPTFJYHL11BpGXUoqhl@dpg-cv6pr33qf0us73f58u9g-a/friorojas_gvps",
   ssl: {
     rejectUnauthorized: false
   }
