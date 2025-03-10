@@ -49,7 +49,7 @@ const Productos = () => {
 
         setProductos(datos || []);
         setTotalProductos(datos.length || 0);
-        console.log(productos);
+        //console.log(productos);
       } catch (err) {
         console.error("Error al cargar productos:", err);
         setError("No se pudieron cargar los productos");
@@ -88,11 +88,12 @@ const Productos = () => {
         {productos.length > 0 ? (
           productos.map((producto) => (
             <Col key={producto.id_producto} md={4} className="mb-4">
-              <Card className="card-custom text-center">
+              <Card className=" text-center">
                 <Card.Img
                   variant="top"
                   src={producto.url}
                   alt={producto.nombre_articulo}
+                  className="img-custom"
                 />
                 <Card.Body>
                   <div className="d-flex justify-content-between align-items-center">
@@ -143,6 +144,15 @@ const Productos = () => {
           disabled={paginaActual === totalPaginas}
         />
       </Pagination>
+      <style>
+        {
+          `
+          .img-custom{
+          height: 350px;
+          }
+          `
+        }
+      </style>
     </Container>
   );
 };

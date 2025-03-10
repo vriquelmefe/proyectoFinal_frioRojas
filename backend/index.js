@@ -23,7 +23,7 @@ import {
   obtenerArticulosCategoria,
   obtenerCategorias,
   registrarDetalleVenta,
-  loginUsuario,
+  eliminarFavorito,
 } from "./consultas.js";
 const port = 3000;
 
@@ -194,6 +194,7 @@ app.get("/favoritos", async (req, res) => {
     const verify = jwt.verify(token, "desafioLatam");
 
     const { email } = verify;
+    //console.log(email);
 
     const favoritos = await obtenerFavoritos(email);
     if (!favoritos) {
@@ -201,7 +202,7 @@ app.get("/favoritos", async (req, res) => {
         .status(404)
         .json({ message: "No se encuentran favoritos registrados" });
     }
-    const datosPublicaciones = await Promise.all(
+    /*const datosPublicaciones = await Promise.all(
       favoritos.map(async (publicacion) => {
         //const idPublicacion = publicacion.id_publicacion;
 
@@ -216,9 +217,9 @@ app.get("/favoritos", async (req, res) => {
           producto,
         };
       })
-    );
+    );*/
 
-    res.json(datosPublicaciones);
+    res.json(favoritos);
 
     /* res.json({
       publicaciones: [
@@ -305,16 +306,30 @@ app.get("/addProducto", async (req, res) => {
   }
 });
 
+//post login
 app.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
-    await loginUsuario(email, password);
-    const token = jwt.sign({ email }, "az_AZ", { expiresIn: "1h" });
-    res.send({ token });
+    //console.log(email, password);
+
+    if (!email || !password) {
+      return res.status(400).json({ error: "Credenciales faltantes" });
+    }
+    const usuario = await verificarUsuario(email, password);
+    //console.log(usuario);
+    const token = jwt.sign({ email: usuario.email }, "desafioLatam", {
+      expiresIn: "10m",
+    });
+    const { id_usuario, nombre, email: correo, rol } = usuario;
+    //console.log("Usuario autenticado:", token);
+    res.json({ token, usuario: { id_usuario, nombre, correo, rol } });
+    /*res.json({
+      token: "blablablablabla",
+      email: "uncorreo",
+    });*/
   } catch (error) {
-    res
-      .status(error.code || 500)
-      .send(error.message || "Error interno del servidor");
+    console.log("plop", error);
+    res.status(error.code || 500).json({ error: error.message });
   }
 });
 
@@ -324,7 +339,7 @@ app.post("/register", async (req, res) => {
     const { nombre, email, password } = req.body;
 
     if (await usuarioExiste(email)) {
-      return res.status(409).json({ message: "El usuario ya existe" });
+      return res.status(400).json({ message: "El usuario ya existe" });
     }
 
     const usuario = await registrarUsuario(nombre, email, password);
@@ -334,6 +349,11 @@ app.post("/register", async (req, res) => {
     });
     //console.log("Usuario autenticado:", token);
     res.json({ token, usuario });
+
+    /*res.json({
+        token: "blablablablabla",
+        email: "uncorreo",
+      });*/
   } catch (error) {
     res.status(error.code || 500).json({ error });
   }
@@ -452,7 +472,8 @@ app.post("/ventas", async (req, res) => {
 
 app.post("/favoritos", async (req, res) => {
   try {
-    const { idPublicacion } = req.body;
+    const { idProducto, estado } = req.body;
+
     const autorization = req.header("Authorization");
     //console.log(idPublicacion);
     if (!autorization) {
@@ -466,13 +487,19 @@ app.post("/favoritos", async (req, res) => {
     const verify = jwt.verify(token, "desafioLatam");
 
     const { email } = verify;
-
+    //console.log(estado);
     const idComprador = await usuarioActual(email);
-
-    await registrarFavorito(idComprador, idPublicacion);
-    res.json({
-      message: "Favorito Guardado",
-    });
+    if (!estado) {
+      await eliminarFavorito(idComprador, idProducto);
+      res.json({
+        message: "Favorito eliminado",
+      });
+    } else {
+      await registrarFavorito(idComprador, idProducto);
+      res.json({
+        message: "Favorito Guardado",
+      });
+    }
   } catch (error) {
     res.status(error.code || 500).json({ error });
   }

@@ -1,13 +1,12 @@
 import bcrypt from "bcryptjs";
 import pkg from "pg";
 const { Pool } = pkg;
-
 const pool = new Pool({
-  host: process.env.DB_HOST,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_NAME,
-  port: 5432,
+  host: "localhost",
+  user: "postgres",
+  password: "password",
+  database: "friorojas",
+  port: 5433,
   allowExitOnIdle: true,
 });
 
@@ -74,20 +73,26 @@ const usuarioExiste = async (email) => {
 const verificarUsuario = async (email, password) => {
   try {
     const consulta = `select * from usuarios where email = $1`;
+
     const { rows, rowCount } = await pool.query(consulta, [email]);
     if (rowCount === 0) {
       const error = new Error("Usuario no Existe");
-      error.code = 404;
+      error.code = 401;
       throw error;
     }
+    //console.log(rows);
     const usuario = rows[0];
+
     const { password: passwordEncriptada } = usuario;
+
     const passwordEsCorrecta = bcrypt.compareSync(password, passwordEncriptada);
+
     if (!passwordEsCorrecta) {
       const error = new Error("Contraseña incorrecta");
       error.code = 401;
       throw error;
     }
+
     return usuario;
   } catch (error) {
     console.error("Error verificando usuario:", error);
@@ -98,30 +103,6 @@ const verificarUsuario = async (email, password) => {
     }
   }
 };
-
-const loginUsuario = async (email, password) => {
-  const values = [email];
-  const consulta = "SELECT * FROM usuarios WHERE email = $1";
-  try {
-    const {
-      rows: [usuario],
-    } = await pool.query(consulta, values);
-    if (!usuario) {
-      throw { code: 404, message: "Usuario no encontrado" };
-    }
-    const { password: passwordEncriptada } = usuario;
-    const passwordEsCorrecta = bcrypt.compareSync(password, passwordEncriptada);
-    if (!passwordEsCorrecta) {
-      throw { code: 401, message: "Email o contraseña incorrecta" };
-    }
-  } catch (error) {
-    if (error.code === "ECONNREFUSED") {
-      throw { code: 500, message: "Error de conexión a la base de datos" };
-    }
-    throw error;
-  }
-};
-
 const obtenerPublicaciones = async (id) => {
   try {
     let consulta, valores;
@@ -146,11 +127,12 @@ const obtenerPublicaciones = async (id) => {
 
 const obtenerFavoritos = async (email) => {
   try {
-    const consulta = `select * from favoritos where id_usuario =(select id_usuario from usuarios where email = $1)`;
+    const consulta = `SELECT p.* FROM articulos p JOIN favoritos f ON f.id_producto = p.id_producto JOIN usuarios u ON f.id_usuario = u.id_usuario WHERE u.email = $1`;
     const { rows, rowCount } = await pool.query(consulta, [email]);
 
     if (!rowCount) {
-      throw { message: "error al cargar informacion", code: 404 };
+      console.log("No se encuentran favoritos registrados");
+      throw { message: "No se encuentran favoritos registrados", code: 404 };
     }
     return rows;
   } catch (error) {
@@ -349,19 +331,35 @@ const obtenerArticuloVentas = async (id) => {
   }
 };
 
-const registrarFavorito = async (idComprador, idPublicacion) => {
+const registrarFavorito = async (idComprador, idProducto) => {
   try {
     const consulta =
-      "insert into favoritos(id_usuario, id_publicacion)values($1, $2)";
+      "insert into favoritos(id_usuario, id_producto)values($1, $2)";
     const { rows, rowCount } = await pool.query(consulta, [
       idComprador,
-      idPublicacion,
+      idProducto,
     ]);
   } catch (error) {
     console.error("Error al Registrar Favoritos:", error);
     throw error;
   }
 };
+
+const eliminarFavorito = async (idComprador, idProducto) => {
+  try {
+    const consulta =
+      "delete from favoritos where id_usuario=$1 and id_producto = $2";
+
+    const { rows, rowCount } = await pool.query(consulta, [
+      idComprador,
+      idProducto,
+    ]);
+  } catch (error) {
+    console.error("Error al Registrar Favoritos:", error);
+    throw error;
+  }
+};
+
 const obtenerCategorias = async () => {
   try {
     const { rows, rowCount } = await pool.query(
@@ -396,5 +394,5 @@ export {
   obtenerArticulosCategoria,
   obtenerCategorias,
   registrarDetalleVenta,
-  loginUsuario,
+  eliminarFavorito,
 };

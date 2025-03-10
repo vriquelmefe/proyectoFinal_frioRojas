@@ -36,9 +36,9 @@ function Navigation() {
             <img
               alt="Logo Frio Rojas"
               src={"logo.png"}
-              width="150"
-              height="150"
-              className="d-inline-block align-top"
+              width="120"
+              height="120"
+              className="d-inline-block align-top p-2"
             />
           </Navbar.Brand>
         </Link>
@@ -72,6 +72,14 @@ function Navigation() {
                   className="text-white"
                 >
                   ➕ Agregar artículos
+                </Button>
+              </Link>
+              <Link to="/favoritos" className="mx-3 pt-2">
+                <Button
+                  variant="outline-info"
+                  className="text-white"
+                >
+                  ❤️ Favoritos
                 </Button>
               </Link>
             </>

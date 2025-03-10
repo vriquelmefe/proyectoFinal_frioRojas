@@ -4,8 +4,6 @@ import { ErrorMessage } from "@hookform/error-message";
 import { useState } from "react";
 
 function Register() {
-  
-  const apiURL = import.meta.env.VITE_API_URL
   const navigate = useNavigate();
   const {
     register,
@@ -32,32 +30,18 @@ function Register() {
       });
 
       if (!response.ok) {
-        if (response.status === 409) {
-          throw new Error("Usuario ya existe");
-        } else if (response.status === 500) {
-          throw new Error("Error del servidor");
-        } else {
-          throw new Error("Error en la solicitud");
-        }
+        throw new Error("Error en la solicitud");
       }
 
       const result = await response.text();
-      console.log(result);
-      navigate("/");
+      //console.log(result);
       alert("Usuario registrado con éxito");
+      navigate("/");
     } catch (error) {
       console.error("Error:", error);
-      if (error.message === "Usuario ya existe") {
-        setRegisterError(
-          "Ya existe un usuario con ese email. Por favor, intenta con otro."
-        );
-      } else if (error.message === "Error del servidor") {
-        setRegisterError("Error del servidor. Por favor, intenta más tarde.");
-      } else {
-        setRegisterError(
-          "En este momento no es posible registrar el usuario. Por favor, intenta más tarde."
-        );
-      }
+      setRegisterError(
+        "Error al registrar el usuario. Por favor, intenta nuevamente."
+      );
     }
   };
 

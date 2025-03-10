@@ -5,7 +5,7 @@ import { useNavigate, Link } from "react-router-dom";
 
 function Login() {
   const navigate = useNavigate();
-  const apiURL = import.meta.env.VITE_API_URL;
+
   const initialValues = {
     email: "",
     password: "",
@@ -21,7 +21,7 @@ function Login() {
 
   const handleLogin = async (data) => {
     try {
-      const response = await fetch(`${apiURL}/login`, {
+      const response = await fetch("http://localhost:3000/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -30,34 +30,19 @@ function Login() {
       });
 
       if (!response.ok) {
-        if (response.status === 500) {
-          throw new Error("Error del servidor");
-        } else if (response.status === 401) {
-          throw new Error("Contraseña incorrecta");
-        } else if (response.status === 404) {
-          throw new Error("Email no existe");
-        } else {
-          throw new Error("Error en la solicitud");
-        }
+        throw new Error("Error en la solicitud");
       }
+
       const result = await response.json();
-      console.log("Token:", result.token);
+      //console.log("Token:", result.token);
       localStorage.setItem("token", result.token);
       alert("Inicio de sesión exitoso");
       navigate("/");
     } catch (error) {
       console.error("Error:", error);
-      if (error.message === "Email no existe") {
-        setLoginError(
-          "El email no está registrado. Por favor, verifica tus credenciales."
-        );
-      } else if (error.message === "Contraseña incorrecta") {
-        setLoginError(
-          "Contraseña incorrecta. Por favor, verifica tus credenciales."
-        );
-      } else {
-        setLoginError("Error del servidor. Por favor, intenta más tarde.");
-      }
+      setLoginError(
+        "Error al iniciar sesión. Por favor, verifica tus credenciales."
+      );
     }
   };
 
