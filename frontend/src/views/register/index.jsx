@@ -28,7 +28,7 @@ const apiUrl = import.meta.env.VITE_API_URL
       //   },
       //   body: JSON.stringify(formData),
       // });
-      const response = await fetch(`${apiUrl}/register`, {
+      const response = await fetch(`${apiUrl}register`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
