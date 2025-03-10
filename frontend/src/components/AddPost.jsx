@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Button, Form, Card, Container } from "react-bootstrap";
 
 const AddPost = () => {
+  const apiUrl = import.meta.env.VITE_API_URL
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -22,7 +23,14 @@ const AddPost = () => {
     e.preventDefault();
     console.log("form", formData);
     try {
-      const response = await fetch("http://localhost:3000/publicacion", {
+      // const response = await fetch("http://localhost:3000/publicacion", {
+      //   method: "POST",
+      //   headers: {
+      //     "Content-Type": "application/json",
+      //   },
+      //   body: JSON.stringify(formData),
+      // });
+      const response = await fetch(`${apiUrl}publicacion`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
